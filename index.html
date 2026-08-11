@@ -4486,9 +4486,16 @@ const DB = {
       return data[table] || [];
     }
     if (!this.client) return [];
-    const { data, error } = await this.client.from(table).select('*').order(orderBy, { ascending: false });
-    if (error) { console.error(`DB.get(${table}) error:`, error); throw error; }
-    return data || [];
+    try {
+      const { data, error } = await this.client.from(table).select('*').order(orderBy, { ascending: false });
+      if (error) throw error;
+      return data || [];
+    } catch(e) {
+      console.warn(`DB.get(${table}) with order failed, trying without:`, e);
+      const { data, error } = await this.client.from(table).select('*');
+      if (error) { console.error(`DB.get(${table}) error:`, error); throw error; }
+      return data || [];
+    }
   },
 
   async getById(table, id) {
@@ -6952,9 +6959,11 @@ async function initApp() {
   }
 
   if (DB.isConnected()) {
-    // Test the connection by trying to fetch data
+    // Test the connection with a simple query (no order() to avoid column issues)
     try {
-      await DB.get('clients');
+      const { data, error } = await DB.client.from('clients').select('*').limit(1);
+      if (error) throw error;
+      console.log('Supabase connected successfully, clients count:', data ? data.length : 0);
       navigate('dashboard');
     } catch(e) {
       console.warn('Supabase connection failed, falling back to offline mode:', e);
