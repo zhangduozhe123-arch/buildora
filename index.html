@@ -2643,6 +2643,1532 @@ body {
 }
 .supabase-config-status.success { display: block; background: var(--success-bg); color: var(--success); }
 .supabase-config-status.error { display: block; background: #FEE2E2; color: #EF4444; }
+
+/* ==================== E-commerce Module ==================== */
+.ecom-dashboard-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.ecom-date-filter {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 4px;
+}
+.ecom-date-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+.ecom-date-btn.active {
+  background: var(--primary);
+  color: white;
+}
+.ecom-date-btn:hover:not(.active) {
+  background: var(--bg-tertiary);
+}
+.ecom-export-btn {
+  margin-left: auto;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}.ecom-export-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+/* === Shoplaza 风格模板样式 === */
+.sl-template-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #52C41A;
+  border: none;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.sl-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: white;
+  border: 1px solid #F0F0F0;
+  border-radius: 4px;
+  padding: 28px 0;
+  margin-bottom: 24px;
+  box-shadow: none;
+}
+.sl-kpi-item {
+  text-align: center;
+  padding: 0 20px;
+  border-right: 1px solid #F0F0F0;
+}
+.sl-kpi-item:last-child { border-right: none; }
+.sl-kpi-item-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.sl-kpi-item-label {
+  font-size: 13px;
+  color: #8C8C8C;
+  font-weight: 400;
+}
+.sl-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.sl-metric-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: box-shadow 0.2s;
+}
+.sl-metric-card:hover { box-shadow: var(--shadow-md); }
+.sl-metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.sl-metric-info { flex: 1; }
+.sl-metric-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #262626;
+  line-height: 1.2;
+}
+.sl-metric-label {
+  font-size: 13px;
+  color: #8C8C8C;
+  margin-top: 2px;
+}
+.sl-metric-badge {
+  display: inline-block;
+  background: #FFF7E6;
+  color: #FAAD14;
+  border: 1px solid #FFD591;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+.sl-analytics-section {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.sl-analytics-tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #F0F0F0;
+  padding: 0 24px;
+}
+.sl-analytics-tab {
+  padding: 16px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #595959;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.sl-analytics-tab:hover { color: var(--primary); }
+.sl-analytics-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+.sl-analytics-more {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--primary);
+  cursor: pointer;
+}
+.sl-analytics-more:hover { text-decoration: underline; }
+.sl-analytics-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 24px;
+  gap: 32px;
+}
+.sl-funnel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.sl-funnel-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sl-funnel-label {
+  width: 140px;
+  font-size: 13px;
+  color: #595959;
+  flex-shrink: 0;
+}
+.sl-funnel-bar-wrap {
+  flex: 1;
+  height: 28px;
+  background: #FAFAFA;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.sl-funnel-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), #14B8A6);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  transition: width 0.5s ease;
+}
+.sl-funnel-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #262626;
+  width: 60px;
+  text-align: right;
+}
+.sl-funnel-rate-badge {
+  background: #E6FFFB;
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  width: 50px;
+  text-align: center;
+}
+.sl-chart-area {
+  background: #FAFBFC;
+  border: 1px solid #F0F0F0;
+  border-radius: 8px;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.sl-chart-placeholder {
+  text-align: center;
+  color: #BFBFBF;
+}
+.sl-chart-placeholder-icon { font-size: 48px; margin-bottom: 8px; }
+.sl-chart-placeholder-text { font-size: 14px; }
+.sl-promo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.sl-promo-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  transition: box-shadow 0.2s;
+}
+.sl-promo-card:hover { box-shadow: var(--shadow-md); }
+.sl-promo-content {
+  flex: 1;
+  padding: 24px;
+}
+.sl-promo-tag {
+  display: inline-block;
+  background: #FFF7E6;
+  color: #FAAD14;
+  border: 1px solid #FFD591;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.sl-promo-tag.new { background: #F0F5FF; color: #1890FF; border-color: #ADC6FF; }
+.sl-promo-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.sl-promo-points {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+}
+.sl-promo-points li {
+  font-size: 13px;
+  color: #595959;
+  padding: 3px 0;
+  padding-left: 16px;
+  position: relative;
+}
+.sl-promo-points li::before {
+  content: '·';
+  position: absolute;
+  left: 4px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.sl-promo-cta {
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+.sl-promo-cta:hover { text-decoration: underline; }
+.sl-promo-image {
+  width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  flex-shrink: 0;
+}
+.sl-right-sidebar {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+.sl-right-sidebar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #F0F0F0;
+}
+.sl-suggestion-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #F5F5F5;
+}
+.sl-suggestion-item:last-child { border-bottom: none; }
+.sl-suggestion-label {
+  font-size: 13px;
+  color: #595959;
+  margin-bottom: 4px;
+}
+.sl-suggestion-value {
+  font-size: 13px;
+  color: #BFBFBF;
+}
+.sl-main-with-sidebar {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+}
+.sl-template-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.sl-template-hint {
+  font-size: 12px;
+  color: #8C8C8C;
+  background: #F0F5FF;
+  padding: 3px 10px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+@media (max-width: 1200px) {
+  .sl-analytics-body { grid-template-columns: 1fr; }
+  .sl-promo-grid { grid-template-columns: 1fr; }
+  .sl-main-with-sidebar { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sl-kpi-row { grid-template-columns: repeat(2, 1fr); padding: 16px 0; }
+  .sl-kpi-item { border-right: none; border-bottom: 1px solid #F0F0F0; padding: 12px; }
+  .sl-metrics-row { grid-template-columns: 1fr; }
+  .sl-promo-card { flex-direction: column; }
+  .sl-promo-image { width: 100%; height: 100px; }
+}
+
+.ecom-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* ===== Shoplaza 风格样式 ===== */
+.sl-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.sl-page-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #262626;
+  margin-bottom: 4px;
+}
+.sl-page-header p {
+  font-size: 13px;
+  color: #8C8C8C;
+}
+.sl-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #D9D9D9;
+  border-radius: 4px;
+  background: white;
+  font-size: 13px;
+  font-weight: 400;
+  color: #595959;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sl-download-btn:hover { border-color: #1890FF; color: #1890FF; }
+
+.sl-online-badge {
+  display: inline-block;
+  background: #52C41A;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.sl-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: white;
+  border: 1px solid #F0F0F0;
+  border-radius: 4px;
+  box-shadow: none;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.sl-kpi-item {
+  padding: 24px 20px;
+  text-align: center;
+  border-right: 1px solid #F0F0F0;
+}
+.sl-kpi-item:last-child { border-right: none; }
+.sl-kpi-label {
+  font-size: 13px;
+  color: #595959;
+  margin-bottom: 8px;
+}
+.sl-kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #262626;
+}
+
+.sl-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.sl-metric-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.sl-metric-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.sl-metric-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.sl-metric-info { flex: 1; }
+.sl-metric-label {
+  font-size: 13px;
+  color: #8C8C8C;
+  margin-bottom: 4px;
+}
+.sl-metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #262626;
+}
+.sl-metric-badge {
+  display: inline-block;
+  background: #FFF7E6;
+  color: #FAAD14;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.sl-chart-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.sl-chart-tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #F0F0F0;
+  padding: 0 20px;
+}
+.sl-chart-tab {
+  padding: 14px 20px;
+  font-size: 14px;
+  color: #595959;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.sl-chart-tab:hover { color: #1890FF; }
+.sl-chart-tab.active {
+  color: #1890FF;
+  border-bottom-color: #1890FF;
+  font-weight: 600;
+}
+.sl-chart-more {
+  margin-left: auto;
+  font-size: 13px;
+  color: #1890FF;
+  cursor: pointer;
+}
+.sl-chart-more:hover { text-decoration: underline; }
+
+.sl-funnel-chart {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 24px 20px;
+}
+.sl-funnel-left { display: flex; flex-direction: column; gap: 16px; }
+.sl-funnel-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sl-funnel-step-label {
+  width: 140px;
+  font-size: 13px;
+  color: #595959;
+  flex-shrink: 0;
+}
+.sl-funnel-step-bar {
+  flex: 1;
+  height: 32px;
+  background: #F5F5F5;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.sl-funnel-step-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1890FF, #69C0FF);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  transition: width 0.6s ease;
+}
+.sl-funnel-step-count {
+  width: 70px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #262626;
+  text-align: right;
+  flex-shrink: 0;
+}
+.sl-funnel-step-rate {
+  width: 50px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.sl-funnel-rate-badge {
+  background: #E6F7FF;
+  color: #1890FF;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.sl-funnel-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FAFAFA;
+  border-radius: 8px;
+  min-height: 240px;
+  position: relative;
+}
+.sl-funnel-chart-area {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  position: relative;
+}
+
+.sl-promo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.sl-promo-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  overflow: hidden;
+  display: flex;
+  transition: box-shadow 0.2s;
+}
+.sl-promo-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.sl-promo-content {
+  flex: 1;
+  padding: 20px;
+}
+.sl-promo-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.sl-promo-tag.promoted { background: #FFF1F0; color: #F5222D; }
+.sl-promo-tag.new { background: #E6F7FF; color: #1890FF; }
+.sl-promo-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.sl-promo-points {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+}
+.sl-promo-points li {
+  font-size: 13px;
+  color: #595959;
+  line-height: 1.6;
+  padding-left: 14px;
+  position: relative;
+}
+.sl-promo-points li::before {
+  content: '•';
+  color: #1890FF;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+.sl-promo-cta {
+  font-size: 13px;
+  color: #1890FF;
+  cursor: pointer;
+  font-weight: 500;
+}
+.sl-promo-cta:hover { text-decoration: underline; }
+.sl-promo-image {
+  width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  flex-shrink: 0;
+}
+
+.sl-suggestion-bar {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.sl-suggestion-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 16px;
+}
+.sl-suggestion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sl-suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #FAFAFA;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #595959;
+}
+.sl-suggestion-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #E6F7FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .sl-kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .sl-kpi-item:nth-child(2) { border-right: none; }
+  .sl-metrics-row { grid-template-columns: repeat(2, 1fr); }
+  .sl-funnel-chart { grid-template-columns: 1fr; }
+  .sl-promo-grid { grid-template-columns: 1fr; }
+  .sl-funnel-step-label { width: 100px; }
+}
+
+.ecom-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.ecom-kpi-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: box-shadow 0.2s;
+}
+.ecom-kpi-card:hover { box-shadow: var(--shadow-md); }
+.ecom-kpi-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.ecom-kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.ecom-kpi-change {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ecom-kpi-change.up { color: var(--success); }
+.ecom-kpi-change.down { color: #EF4444; }
+.ecom-kpi-sub {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+
+.ecom-funnel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.ecom-funnel-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.ecom-funnel-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ecom-funnel-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.ecom-funnel-step-label {
+  width: 120px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: right;
+  flex-shrink: 0;
+}
+.ecom-funnel-bar-container {
+  flex: 1;
+  height: 36px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+.ecom-funnel-bar {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  transition: width 0.6s ease;
+}
+.ecom-funnel-step-value {
+  width: 80px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+.ecom-funnel-step-rate {
+  width: 60px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.ecom-chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.ecom-chart-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+.ecom-chart-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ecom-chart-card-title a {
+  font-size: 12px;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+.ecom-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 180px;
+  padding-top: 10px;
+}
+.ecom-bar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.ecom-bar {
+  width: 100%;
+  max-width: 40px;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.5s ease;
+  position: relative;
+}
+.ecom-bar:hover::after {
+  content: attr(data-value);
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--text-primary);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.ecom-bar-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60px;
+}
+
+.ecom-table-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.ecom-table-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.ecom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ecom-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.ecom-table td {
+  padding: 12px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--bg-secondary);
+}
+.ecom-table tr:last-child td { border-bottom: none; }
+.ecom-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+.ecom-rank.top-1 { background: #FEF3C7; color: #92400E; }
+.ecom-rank.top-2 { background: #E0E7FF; color: #3730A3; }
+.ecom-rank.top-3 { background: #FEE2E2; color: #991B1B; }
+
+.ecom-status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+.ecom-status-pending { background: #FEF3C7; color: #92400E; }
+.ecom-status-paid { background: #D1FAE5; color: #065F46; }
+.ecom-status-shipped { background: #DBEAFE; color: #1E40AF; }
+.ecom-status-completed { background: var(--success-bg); color: var(--success); }
+.ecom-status-refunded { background: #FEE2E2; color: #991B1B; }
+.ecom-status-active { background: var(--success-bg); color: var(--success); }
+.ecom-status-inactive { background: var(--bg-secondary); color: var(--text-tertiary); }
+
+.ecom-donut-chart {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.ecom-donut {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+.ecom-donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.ecom-donut-center-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+.ecom-donut-center-label {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+.ecom-donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ecom-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.ecom-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.ecom-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+.ecom-product-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.ecom-product-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+.ecom-product-img {
+  width: 100%;
+  height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 120px;
+  position: relative;
+  overflow: hidden;
+}
+.ecom-product-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 70%, rgba(0,0,0,0.06));
+  pointer-events: none;
+}
+.ecom-product-info {
+  padding: 18px 20px 20px;
+}
+.ecom-product-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ecom-product-price {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.ecom-product-meta {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+
+.ecom-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.ecom-tab {
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.ecom-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.ecom-coupon-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.ecom-coupon-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.ecom-coupon-info { flex: 1; }
+.ecom-coupon-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.ecom-coupon-desc { font-size: 12px; color: var(--text-tertiary); }
+.ecom-coupon-code {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--bg-secondary);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .ecom-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .ecom-chart-grid { grid-template-columns: 1fr; }
+  .ecom-funnel-step-label { width: 80px; font-size: 12px; }
+}
+
+/* ==================== Template Gallery ==================== */
+.template-gallery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.template-gallery-title h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.template-gallery-title p {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.template-category-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.template-category-btn {
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+.template-category-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.template-category-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+.template-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.3s;
+  background: var(--bg-primary);
+  cursor: pointer;
+  position: relative;
+}
+.template-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 12px 40px rgba(13, 148, 136, 0.12);
+  transform: translateY(-4px);
+}
+.template-card:hover .template-preview-overlay {
+  opacity: 1;
+}
+.template-preview {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-gray);
+}
+.template-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 148, 136, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 2;
+}
+.template-preview-overlay button {
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  background: white;
+  color: var(--primary);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.template-preview-overlay button:hover {
+  transform: scale(1.05);
+}
+.template-info {
+  padding: 18px 20px 20px;
+}
+.template-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.template-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.template-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+.template-badge.hot {
+  background: #FEF3C7;
+  color: #D97706;
+}
+.template-badge.new {
+  background: #D1FAE5;
+  color: #059669;
+}
+.template-badge.popular {
+  background: #DBEAFE;
+  color: #2563EB;
+}
+.template-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.template-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.template-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+.template-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.template-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.template-use-btn {
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.template-use-btn:hover {
+  background: var(--primary-dark);
+  transform: scale(1.03);
+}
+
+/* Mini template previews */
+.tpl-preview-ecommerce {
+  background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 6px;
+}
+.tpl-preview-ecommerce .mini-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #99f6e4;
+}
+.tpl-preview-ecommerce .mini-logo {
+  width: 20px; height: 20px; border-radius: 4px; background: #0D9488;
+}
+.tpl-preview-ecommerce .mini-nav {
+  display: flex; gap: 8px; flex: 1;
+}
+.tpl-preview-ecommerce .mini-nav span {
+  height: 6px; border-radius: 3px; background: #5eead4;
+}
+.tpl-preview-ecommerce .mini-products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  flex: 1;
+}
+.tpl-preview-ecommerce .mini-product {
+  background: white;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+}
+.tpl-preview-ecommerce .mini-product-img {
+  height: 40px;
+  border-radius: 4px;
+}
+.tpl-preview-ecommerce .mini-product-line {
+  height: 4px;
+  border-radius: 2px;
+}
+
+.tpl-preview-corporate {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 6px;
+}
+.tpl-preview-corporate .mini-hero {
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+.tpl-preview-corporate .mini-hero-line {
+  height: 8px; border-radius: 4px; background: #475569;
+}
+.tpl-preview-corporate .mini-hero-btn {
+  width: 60px; height: 14px; border-radius: 7px; background: #0D9488;
+}
+.tpl-preview-corporate .mini-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  flex: 1;
+}
+.tpl-preview-corporate .mini-card {
+  background: #334155;
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tpl-preview-portfolio {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 6px;
+}
+.tpl-preview-portfolio .mini-avatar {
+  width: 40px; height: 40px; border-radius: 50%; background: #0D9488;
+  margin: 0 auto;
+}
+.tpl-preview-portfolio .mini-name {
+  height: 6px; width: 60%; margin: 0 auto; border-radius: 3px; background: #14B8A6;
+}
+.tpl-preview-portfolio .mini-projects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  flex: 1;
+}
+.tpl-preview-portfolio .mini-project {
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-preview-blog {
+  background: #fffbeb;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 6px;
+}
+.tpl-preview-blog .mini-blog-header {
+  height: 8px; width: 40%; border-radius: 4px; background: #D97706;
+}
+.tpl-preview-blog .mini-blog-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.tpl-preview-blog .mini-blog-item {
+  background: white;
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  gap: 6px;
+}
+.tpl-preview-blog .mini-blog-thumb {
+  width: 30px; height: 30px; border-radius: 4px; flex-shrink: 0;
+}
+.tpl-preview-blog .mini-blog-lines {
+  flex: 1; display: flex; flex-direction: column; gap: 3px; justify-content: center;
+}
+
+.tpl-preview-landing {
+  background: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+}
+.tpl-preview-landing .mini-landing-title {
+  height: 10px; width: 70%; border-radius: 5px; background: white;
+}
+.tpl-preview-landing .mini-landing-sub {
+  height: 5px; width: 50%; border-radius: 3px; background: rgba(255,255,255,0.6);
+}
+.tpl-preview-landing .mini-landing-btn {
+  width: 80px; height: 16px; border-radius: 8px; background: white;
+}
+
+.tpl-preview-restaurant {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 6px;
+}
+.tpl-preview-restaurant .mini-rest-header {
+  display: flex; justify-content: center; margin-bottom: 4px;
+}
+.tpl-preview-restaurant .mini-rest-logo {
+  width: 30px; height: 30px; border-radius: 50%; background: #DC2626;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.tpl-preview-restaurant .mini-menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  flex: 1;
+}
+.tpl-preview-restaurant .mini-menu-item {
+  background: white;
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.tpl-preview-restaurant .mini-menu-img {
+  height: 24px; border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .template-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -2661,9 +4187,13 @@ body {
 
     <nav class="sidebar-nav">
       <div class="nav-section">
+        <div class="nav-item" onclick="navigate('templates')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>创建新网站</span>
+        </div>
         <div class="nav-item" onclick="navigate('dashboard')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          <span>创建新网站</span>
+          <span>工作台</span>
         </div>
         <div class="nav-item" onclick="navigate('analytics')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -2692,6 +4222,17 @@ body {
       </div>
 
       <div class="nav-section">
+        <div class="nav-item" onclick="toggleSubmenu(this); navigate('ecommerce-overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span>电商模块</span>
+          <svg class="nav-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="nav-submenu">
+          <div class="nav-item" onclick="navigate('ecommerce-overview')">电商概览</div>
+          <div class="nav-item" onclick="navigate('ecommerce-products')">商品管理</div>
+          <div class="nav-item" onclick="navigate('ecommerce-orders')">订单管理</div>
+          <div class="nav-item" onclick="navigate('ecommerce-marketing')">营销活动</div>
+        </div>
         <div class="nav-item" onclick="navigate('products')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
           <span>产品与服务</span>
@@ -3063,7 +4604,12 @@ const pages = {
   editor: { title: 'AI 建站编辑器', render: renderEditor },
   'landing-preview': { title: '落地页预览', render: renderLandingPreview },
   settings: { title: '设置', render: renderSettings },
-  integrations: { title: '连接', render: renderIntegrationsPage }
+  integrations: { title: '连接', render: renderIntegrationsPage },
+  'ecommerce-overview': { title: '电商概览', render: renderEcommerceOverview },
+  'ecommerce-products': { title: '商品管理', render: renderEcommerceProducts },
+  'ecommerce-orders': { title: '订单管理', render: renderEcommerceOrders },
+  'ecommerce-marketing': { title: '营销活动', render: renderEcommerceMarketing },
+  'templates': { title: '模板选择', render: renderTemplateGallery }
 };
 
 let currentPage = 'dashboard';
@@ -3075,7 +4621,7 @@ function navigate(page) {
   document.getElementById('topbarTitle').textContent = config.title;
 
   // Check DB connection for data pages
-  if (!DB.isConnected() && page !== 'settings') {
+  if (!DB.isConnected() && page !== 'settings' && page !== 'templates' && page !== 'editor' && page !== 'landing-preview') {
     document.getElementById('contentWrapper').innerHTML = renderDisconnected(page);
     updateActiveNav(config.title);
     closeMobileSidebar();
@@ -3184,7 +4730,7 @@ async function renderDashboard() {
           <h1>概览</h1>
           <p>欢迎回来，Duozhe！这里是你项目的概览。</p>
         </div>
-        <button class="btn btn-gradient" onclick="navigate('editor')">
+        <button class="btn btn-gradient" onclick="navigate('templates')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           创建新网站
         </button>
@@ -3254,7 +4800,7 @@ async function renderDashboard() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               添加产品
             </button>
-            <button class="btn btn-outline" style="justify-content: flex-start;" onclick="navigate('editor')">
+            <button class="btn btn-outline" style="justify-content: flex-start;" onclick="navigate('templates')">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               AI 建站
             </button>
@@ -5158,6 +6704,32 @@ function showToast(message) {
   }, 2500);
 }
 
+function showConfirm(message, onConfirm) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  modal.innerHTML = `
+    <div style="background:var(--bg-primary);border-radius:var(--radius-lg);padding:24px;width:380px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div style="font-size:15px;font-weight:600;color:var(--text-primary);">${message}</div>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button onclick="this.closest('.modal-overlay').remove()" style="flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;background:var(--bg-primary);color:var(--text-primary);">取消</button>
+        <button id="confirmBtn" style="flex:1;padding:10px;border:none;border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;background:#DC2626;color:white;">确定删除</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector('#confirmBtn').addEventListener('click', () => {
+    modal.remove();
+    if (onConfirm) onConfirm();
+  });
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+
 function updateCharCount(input, max, countId) {
   const count = document.getElementById(countId);
   if (count) count.textContent = input.value.length;
@@ -5277,6 +6849,1008 @@ if (!DB.isConnected()) {
   showSupabaseConfig();
 } else {
   navigate('dashboard');
+}
+
+// ==================== E-commerce Module ====================
+
+// 电商模拟数据（支持 localStorage 持久化）
+let ecomData = JSON.parse(localStorage.getItem('buildora_ecom_data')) || {
+  kpi: {
+    totalSales: { value: '¥128,450', change: '+12.5%', up: true, sub: '对比上期 ¥114,200' },
+    totalOrders: { value: '1,284', change: '+8.3%', up: true, sub: '对比上期 1,186' },
+    visitors: { value: '15,680', change: '+15.2%', up: true, sub: '对比上期 13,612' },
+    conversionRate: { value: '8.19%', change: '-0.5%', up: false, sub: '对比上期 8.69%' }
+  },
+  shoplazaKpi: {
+    visitors: { value: '15,680', label: '在线商店访问用户' },
+    orders: { value: '1,284', label: '订单量' },
+    salesUSD: { value: '$18,250', label: '销售额(USD)' },
+    conversion: { value: '8.19%', label: '在线商店转化率' }
+  },
+  shoplazaMetrics: {
+    pendingShipment: { value: 3, label: '待发货订单', icon: '📦', color: '#1890FF' },
+    unpaidOrders: { value: 2, label: '未支付订单', icon: '💳', color: '#1890FF' },
+    totalTraffic: { value: '15,680', label: '在线商店总流量', icon: '📊', color: '#1890FF' },
+    security: { value: '待处理', label: '安全中心', icon: '🛡️', color: '#FAAD14', badge: true }
+  },
+  shoplazaFunnel: [
+    { label: '在线商店访问用户', value: 15680, rate: '100%' },
+    { label: '加入购物车', value: 4200, rate: '26.8%' },
+    { label: '发起结账', value: 2100, rate: '13.4%' },
+    { label: '添加支付信息', value: 1800, rate: '11.5%' },
+    { label: '下单成功', value: 1284, rate: '8.19%' }
+  ],
+  promoCards: [
+    {
+      tag: '推广',
+      title: 'Buildora 联动 SDS 潮印服饰，解锁高利润 POD 玩法！🚀',
+      points: [
+        '纯T恤 19.99, 满印款定价 39.99 以上, 纯增收！',
+        '百十条货源工厂, 极速发货, 履约率超 95%',
+        '零库存, 零风险, 一件代发'
+      ],
+      cta: '立即下载',
+      icon: '👕',
+      bg: '#FFF7E6'
+    },
+    {
+      tag: '新功能',
+      title: '想知道昨天转化率怎么样？直接问 Athena',
+      points: [
+        '支持从渠道、国家、设备拆解流量转化表现',
+        '帮你分析购物车、零访问、加购、结账等节点数据',
+        'AI 智能诊断, 一键生成优化建议'
+      ],
+      cta: '点击店铺右上角「Athena」，立即查看转化率！',
+      icon: '🤖',
+      bg: '#F0F5FF'
+    }
+  ],
+  funnel: [
+    { label: '访问店铺', value: 15680, rate: '100%', width: '100%', color: '#0D9488' },
+    { label: '查看商品', value: 11290, rate: '72%', width: '72%', color: '#14B8A6' },
+    { label: '加入购物车', value: 4200, rate: '26.8%', width: '42%', color: '#2DD4BF' },
+    { label: '发起结账', value: 2100, rate: '13.4%', width: '28%', color: '#5EEAD4' },
+    { label: '完成购买', value: 1284, rate: '8.19%', width: '18%', color: '#99F6E4' }
+  ],
+  trafficChannels: [
+    { name: '自然搜索', value: 5200, color: '#0D9488' },
+    { name: '社交媒体', value: 3800, color: '#14B8A6' },
+    { name: '直接访问', value: 2800, color: '#2DD4BF' },
+    { name: '广告引流', value: 2100, color: '#5EEAD4' },
+    { name: '邮件营销', value: 1080, color: '#99F6E4' },
+    { name: '推荐链接', value: 700, color: '#F59E0B' }
+  ],
+  salesTrend: [
+    { day: '周一', value: 18200 }, { day: '周二', value: 15600 },
+    { day: '周三', value: 22400 }, { day: '周四', value: 19800 },
+    { day: '周五', value: 28600 }, { day: '周六', value: 32100 },
+    { day: '周日', value: 24800 }
+  ],
+  topProducts: [
+    { name: '智能蓝牙耳机 Pro', sold: 342, revenue: '¥68,400', views: 5200 },
+    { name: '无线充电器', sold: 286, revenue: '¥28,600', views: 4100 },
+    { name: '便携咖啡机', sold: 198, revenue: '¥59,400', views: 3800 },
+    { name: '运动手环 5', sold: 156, revenue: '¥31,200', views: 3200 },
+    { name: '机械键盘', sold: 134, revenue: '¥40,200', views: 2800 }
+  ],
+  topCountries: [
+    { country: '中国', orders: 580, percent: '45.2%' },
+    { country: '美国', orders: 320, percent: '24.9%' },
+    { country: '日本', orders: 180, percent: '14.0%' },
+    { country: '韩国', orders: 95, percent: '7.4%' },
+    { country: '其他', orders: 109, percent: '8.5%' }
+  ],
+  paymentMethods: [
+    { name: '支付宝', percent: 35, color: '#1677FF' },
+    { name: '微信支付', percent: 28, color: '#07C160' },
+    { name: '信用卡', percent: 22, color: '#0D9488' },
+    { name: 'PayPal', percent: 10, color: '#F59E0B' },
+    { name: '其他', percent: 5, color: '#94A3B8' }
+  ],
+  devices: [
+    { name: '移动端', percent: 62, color: '#0D9488' },
+    { name: '桌面端', percent: 28, color: '#14B8A6' },
+    { name: '平板', percent: 10, color: '#5EEAD4' }
+  ],
+  products: [
+    { name: '智能蓝牙耳机 Pro', price: '¥199', stock: 156, sold: 342, status: 'active', icon: '🎧', bg: '#DBEAFE' },
+    { name: '无线充电器', price: '¥99', stock: 89, sold: 286, status: 'active', icon: '🔌', bg: '#FEF3C7' },
+    { name: '便携咖啡机', price: '¥299', stock: 45, sold: 198, status: 'active', icon: '☕', bg: '#FED7AA' },
+    { name: '运动手环 5', price: '¥199', stock: 0, sold: 156, status: 'inactive', icon: '⌚', bg: '#D1FAE5' },
+    { name: '机械键盘', price: '¥299', stock: 67, sold: 134, status: 'active', icon: '⌨️', bg: '#E0E7FF' },
+    { name: '智能台灯', price: '¥159', stock: 120, sold: 98, status: 'active', icon: '💡', bg: '#FEF9C3' },
+    { name: '便携音箱', price: '¥249', stock: 34, sold: 87, status: 'active', icon: '🔊', bg: '#FCE7F3' },
+    { name: '手机支架', price: '¥39', stock: 200, sold: 76, status: 'active', icon: '📱', bg: '#E0F2FE' }
+  ],
+  orders: [
+    { id: '#20260810001', customer: '张三', email: 'zhang@example.com', total: '¥597', status: 'pending', items: 3, date: '2026-08-10' },
+    { id: '#20260810002', customer: '李四', email: 'li@example.com', total: '¥199', status: 'paid', items: 1, date: '2026-08-10' },
+    { id: '#20260809003', customer: '王五', email: 'wang@example.com', total: '¥1,098', status: 'shipped', items: 4, date: '2026-08-09' },
+    { id: '#20260809004', customer: '赵六', email: 'zhao@example.com', total: '¥299', status: 'completed', items: 1, date: '2026-08-09' },
+    { id: '#20260808005', customer: '孙七', email: 'sun@example.com', total: '¥498', status: 'completed', items: 2, date: '2026-08-08' },
+    { id: '#20260808006', customer: '周八', email: 'zhou@example.com', total: '¥159', status: 'refunded', items: 1, date: '2026-08-08' },
+    { id: '#20260807007', customer: '吴九', email: 'wu@example.com', total: '¥897', status: 'completed', items: 3, date: '2026-08-07' },
+    { id: '#20260807008', customer: '郑十', email: 'zheng@example.com', total: '¥398', status: 'pending', items: 2, date: '2026-08-07' }
+  ],
+  coupons: [
+    { name: '新人专享 8 折', code: 'NEW20', desc: '新用户首单享受 8 折优惠', icon: '🎁', bg: '#FEF3C7', used: 342, total: 1000 },
+    { name: '满 200 减 30', code: 'SAVE30', desc: '订单满 200 元立减 30 元', icon: '💰', bg: '#D1FAE5', used: 568, total: 2000 },
+    { name: '免费配送', code: 'FREESHIP', desc: '全场包邮，不限金额', icon: '🚚', bg: '#DBEAFE', used: 1024, total: 5000 },
+    { name: '会员双倍积分', code: '2XPOINTS', desc: '会员专享，购物积分双倍', icon: '⭐', bg: '#E0E7FF', used: 189, total: 500 }
+  ]
+};
+
+function saveEcomData() {
+  localStorage.setItem('buildora_ecom_data', JSON.stringify(ecomData));
+}
+
+function renderEcommerceOverview() {
+  const k = ecomData.shoplazaKpi;
+  const m = ecomData.shoplazaMetrics;
+  const funnel = ecomData.shoplazaFunnel;
+  const maxFunnel = funnel[0].value;
+
+  return `
+    <div class="page active">
+      <div class="sl-page-header">
+        <div>
+          <div class="sl-template-hint">📋 Shoplaza 风格模板 · 作为 Buildora 电商参考模板使用</div>
+          <h1 style="margin-top:8px;">主页</h1>
+          <p>当前时区: UTC+0800 北京时间</p>
+        </div>
+        <button class="sl-download-btn" onclick="showToast('今日数据已下载')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          下载今日数据
+        </button>
+      </div>
+
+      <div class="sl-main-with-sidebar">
+        <div>
+          <!-- 绿色在线方案徽章 -->
+          <div class="sl-template-badge">
+            <span style="width:6px;height:6px;border-radius:50%;background:#52C41A;display:inline-block;"></span>
+            4个在线方案
+          </div>
+
+          <!-- KPI 统计卡片 -->
+          <div class="sl-kpi-row">
+            <div class="sl-kpi-item">
+              <div class="sl-kpi-item-value">${k.visitors.value}</div>
+              <div class="sl-kpi-item-label">${k.visitors.label}</div>
+            </div>
+            <div class="sl-kpi-item">
+              <div class="sl-kpi-item-value">${k.orders.value}</div>
+              <div class="sl-kpi-item-label">${k.orders.label}</div>
+            </div>
+            <div class="sl-kpi-item">
+              <div class="sl-kpi-item-value">${k.salesUSD.value}</div>
+              <div class="sl-kpi-item-label">${k.salesUSD.label}</div>
+            </div>
+            <div class="sl-kpi-item">
+              <div class="sl-kpi-item-value">${k.conversion.value}</div>
+              <div class="sl-kpi-item-label">${k.conversion.label}</div>
+            </div>
+          </div>
+
+          <!-- 二级指标卡片 -->
+          <div class="sl-metrics-row">
+            <div class="sl-metric-card">
+              <div class="sl-metric-icon" style="background:#E6F7FF;color:#1890FF;">${m.pendingShipment.icon}</div>
+              <div class="sl-metric-info">
+                <div class="sl-metric-value">${m.pendingShipment.value}</div>
+                <div class="sl-metric-label">${m.pendingShipment.label}</div>
+              </div>
+            </div>
+            <div class="sl-metric-card">
+              <div class="sl-metric-icon" style="background:#E6F7FF;color:#1890FF;">${m.unpaidOrders.icon}</div>
+              <div class="sl-metric-info">
+                <div class="sl-metric-value">${m.unpaidOrders.value}</div>
+                <div class="sl-metric-label">${m.unpaidOrders.label}</div>
+              </div>
+            </div>
+            <div class="sl-metric-card">
+              <div class="sl-metric-icon" style="background:#E6F7FF;color:#1890FF;">${m.totalTraffic.icon}</div>
+              <div class="sl-metric-info">
+                <div class="sl-metric-value">${m.totalTraffic.value}</div>
+                <div class="sl-metric-label">${m.totalTraffic.label}</div>
+              </div>
+            </div>
+            <div class="sl-metric-card">
+              <div class="sl-metric-icon" style="background:#FFF7E6;color:#FAAD14;">${m.security.icon}</div>
+              <div class="sl-metric-info">
+                <div class="sl-metric-value"><span class="sl-metric-badge">${m.security.value}</span></div>
+                <div class="sl-metric-label">${m.security.label}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 数据分析区域 -->
+          <div class="sl-analytics-section">
+            <div class="sl-analytics-tabs">
+              <div class="sl-analytics-tab active" onclick="slDateFilter(this,'today')">今天</div>
+              <div class="sl-analytics-tab" onclick="slDateFilter(this,'yesterday')">昨天</div>
+              <div class="sl-analytics-tab" onclick="slDateFilter(this,'7d')">过去7天</div>
+              <div class="sl-analytics-tab" onclick="slDateFilter(this,'30d')">过去30天</div>
+              <span class="sl-analytics-more" onclick="showToast('跳转到更多店铺数据')">更多店铺数据 →</span>
+            </div>
+            <div class="sl-analytics-body">
+              <!-- 转化漏斗 -->
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#262626;margin-bottom:16px;">转化漏斗</div>
+                <div class="sl-funnel-list">
+                  ${funnel.map((step, i) => `
+                    <div class="sl-funnel-item">
+                      <div class="sl-funnel-label">${step.label}</div>
+                      <div class="sl-funnel-bar-wrap">
+                        <div class="sl-funnel-bar-fill" style="width: ${step.value / maxFunnel * 100}%;">${step.rate}</div>
+                      </div>
+                      <div class="sl-funnel-count">${step.value.toLocaleString()}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+              <!-- 图表区域 -->
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#262626;margin-bottom:16px;">趋势图</div>
+                <div class="sl-chart-area">
+                  <div class="sl-chart-placeholder">
+                    <div class="sl-chart-placeholder-icon">📈</div>
+                    <div class="sl-chart-placeholder-text">选择时间范围查看数据趋势</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 推广/功能卡片 -->
+          <div class="sl-promo-grid">
+            ${ecomData.promoCards.map(card => `
+              <div class="sl-promo-card">
+                <div class="sl-promo-content">
+                  <span class="sl-promo-tag ${card.tag === '新功能' ? 'new' : ''}">${card.tag}</span>
+                  <div class="sl-promo-title">${card.title}</div>
+                  <ul class="sl-promo-points">
+                    ${card.points.map(p => `<li>${p}</li>`).join('')}
+                  </ul>
+                  <span class="sl-promo-cta" onclick="showToast('查看详情: ${card.title}')">${card.cta} →</span>
+                </div>
+                <div class="sl-promo-image" style="background:${card.bg};">${card.icon}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- 右侧边栏：店铺经营建议 -->
+        <div>
+          <div class="sl-right-sidebar">
+            <div class="sl-right-sidebar-title">🏪 店铺经营建议</div>
+            <div class="sl-suggestion-item">
+              <div class="sl-suggestion-label">今日待办</div>
+              <div class="sl-suggestion-value">暂无数据</div>
+            </div>
+            <div class="sl-suggestion-item">
+              <div class="sl-suggestion-label">商品优化建议</div>
+              <div class="sl-suggestion-value">暂无数据</div>
+            </div>
+            <div class="sl-suggestion-item">
+              <div class="sl-suggestion-label">营销活动提醒</div>
+              <div class="sl-suggestion-value">暂无数据</div>
+            </div>
+            <div class="sl-suggestion-item">
+              <div class="sl-suggestion-label">客户跟进</div>
+              <div class="sl-suggestion-value">暂无数据</div>
+            </div>
+            <div class="sl-suggestion-item">
+              <div class="sl-suggestion-label">库存预警</div>
+              <div class="sl-suggestion-value">暂无数据</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function slDateFilter(el, period) {
+  document.querySelectorAll('.sl-analytics-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const labels = { today: '今天', yesterday: '昨天', '7d': '过去7天', '30d': '过去30天' };
+  showToast('已切换至: ' + (labels[period] || period));
+}
+
+function renderEcommerceProducts() {
+  return `
+    <div class="page active">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1>商品管理</h1>
+          <p>管理店铺商品、库存和分类（共 ${ecomData.products.length} 个商品）</p>
+        </div>
+        <button class="btn btn-gradient" onclick="openProductModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          添加商品
+        </button>
+      </div>
+
+      <div class="ecom-tabs">
+        <button class="ecom-tab active" onclick="ecomProductFilter(this, 'all')">全部商品 (${ecomData.products.length})</button>
+        <button class="ecom-tab" onclick="ecomProductFilter(this, 'active')">在售 (${ecomData.products.filter(p => p.status === 'active').length})</button>
+        <button class="ecom-tab" onclick="ecomProductFilter(this, 'inactive')">已下架 (${ecomData.products.filter(p => p.status === 'inactive').length})</button>
+        <button class="ecom-tab" onclick="ecomProductFilter(this, 'lowstock')">低库存 (${ecomData.products.filter(p => p.stock > 0 && p.stock < 50).length})</button>
+      </div>
+
+      <div class="ecom-product-grid" id="ecomProductGrid">
+        ${ecomData.products.map((p, i) => `
+          <div class="ecom-product-card" data-status="${p.status}" data-stock="${p.stock}">
+            <div class="ecom-product-img" style="background: ${p.bg};">${p.icon}</div>
+            <div class="ecom-product-info">
+              <div class="ecom-product-name">${p.name}</div>
+              <div class="ecom-product-price">${p.price}</div>
+              <div class="ecom-product-meta">
+                库存 ${p.stock} · 已售 ${p.sold}
+              </div>
+              <div style="margin-top: 8px; display: flex; align-items: center; justify-content: space-between;">
+                <span class="ecom-status-badge ecom-status-${p.status}">
+                  ${p.status === 'active' ? '在售' : '已下架'}
+                </span>
+                <div style="display: flex; gap: 4px;">
+                  <button class="table-action-btn" onclick="openProductModal(${i})" title="编辑" style="color: var(--primary);">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  </button>
+                  <button class="table-action-btn" onclick="deleteProduct(${i})" title="删除" style="color: var(--danger);">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// 商品添加/编辑弹窗
+function openProductModal(editIndex) {
+  const isEdit = typeof editIndex === 'number';
+  const p = isEdit ? ecomData.products[editIndex] : { name: '', price: '¥', stock: 0, sold: 0, status: 'active', icon: '📦', bg: '#E0F2FE' };
+  const icons = ['📦','🎧','🔌','☕','⌚','⌨️','💡','🔊','📱','🖥️','📷','🎮','📚','🎨','🍳','🧴'];
+  const bgs = ['#DBEAFE','#FEF3C7','#FED7AA','#D1FAE5','#E0E7FF','#FEF9C3','#FCE7F3','#E0F2FE','#F3F4F6','#FAE8FF'];
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  modal.innerHTML = `
+    <div style="background:var(--bg-primary);border-radius:var(--radius-lg);padding:28px;width:480px;max-width:90vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-size:18px;font-weight:700;">${isEdit ? '编辑商品' : '添加商品'}</h3>
+        <button onclick="this.closest('.modal-overlay').remove()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:20px;">&times;</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">商品图标</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            ${icons.map(ic => `<div onclick="this.parentElement.querySelectorAll('div').forEach(d=>d.style.borderColor='var(--border)');this.style.borderColor='var(--primary)';this.style.background='var(--primary-bg)';document.getElementById('prodIconInput').value=this.textContent;" style="width:36px;height:36px;border-radius:var(--radius-md);border:2px solid ${ic===p.icon?'var(--primary)':'var(--border)'};background:${ic===p.icon?'var(--primary-bg)':'var(--bg-secondary)'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;">${ic}</div>`).join('')}
+          </div>
+          <input type="hidden" id="prodIconInput" value="${p.icon}">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">商品名称 <span style="color:var(--danger);">*</span></label>
+          <input type="text" id="prodNameInput" value="${p.name}" placeholder="请输入商品名称" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;outline:none;">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">价格（¥）<span style="color:var(--danger);">*</span></label>
+            <input type="number" id="prodPriceInput" value="${p.price.replace('¥','')}" placeholder="0" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;outline:none;">
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">库存数量</label>
+            <input type="number" id="prodStockInput" value="${p.stock}" placeholder="0" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;outline:none;">
+          </div>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">商品状态</label>
+          <select id="prodStatusInput" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;outline:none;">
+            <option value="active" ${p.status==='active'?'selected':''}>在售</option>
+            <option value="inactive" ${p.status==='inactive'?'selected':''}>已下架</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <button onclick="this.closest('.modal-overlay').remove()" style="flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;background:var(--bg-primary);color:var(--text-primary);">取消</button>
+          <button onclick="saveProduct(${isEdit ? editIndex : -1})" style="flex:1;padding:10px;border:none;border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;background:var(--primary);color:white;">${isEdit?'保存修改':'添加商品'}</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+
+function saveProduct(editIndex) {
+  const name = document.getElementById('prodNameInput').value.trim();
+  const price = document.getElementById('prodPriceInput').value.trim();
+  const stock = parseInt(document.getElementById('prodStockInput').value) || 0;
+  const status = document.getElementById('prodStatusInput').value;
+  const icon = document.getElementById('prodIconInput').value;
+  const bgs = ['#DBEAFE','#FEF3C7','#FED7AA','#D1FAE5','#E0E7FF','#FEF9C3','#FCE7F3','#E0F2FE'];
+  const bg = bgs[Math.floor(Math.random() * bgs.length)];
+
+  if (!name) { showToast('请输入商品名称'); return; }
+  if (!price) { showToast('请输入商品价格'); return; }
+
+  if (editIndex >= 0) {
+    ecomData.products[editIndex] = { ...ecomData.products[editIndex], name, price: '¥' + price, stock, status, icon, bg };
+    showToast('商品已更新');
+  } else {
+    ecomData.products.push({ name, price: '¥' + price, stock, sold: 0, status, icon, bg });
+    showToast('商品已添加');
+  }
+  saveEcomData();
+  document.querySelector('.modal-overlay')?.remove();
+  navigate('ecommerce-products');
+}
+
+function deleteProduct(index) {
+  const p = ecomData.products[index];
+  showConfirm(`确定要删除商品「${p.name}」吗？`, () => {
+    ecomData.products.splice(index, 1);
+    saveEcomData();
+    showToast('商品已删除');
+    navigate('ecommerce-products');
+  });
+}
+
+function ecomProductFilter(btn, filter) {
+  document.querySelectorAll('.ecom-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('#ecomProductGrid .ecom-product-card');
+  cards.forEach(card => {
+    const status = card.dataset.status;
+    const stock = parseInt(card.dataset.stock);
+    let show = false;
+    if (filter === 'all') show = true;
+    else if (filter === 'active') show = status === 'active';
+    else if (filter === 'inactive') show = status === 'inactive';
+    else if (filter === 'lowstock') show = stock > 0 && stock < 50;
+    card.style.display = show ? '' : 'none';
+  });
+}
+
+function renderEcommerceOrders() {
+  const statusMap = {
+    pending: '待支付', paid: '已支付', shipped: '已发货',
+    completed: '已完成', refunded: '已退款'
+  };
+  const counts = {};
+  ecomData.orders.forEach(o => { counts[o.status] = (counts[o.status] || 0) + 1; });
+
+  return `
+    <div class="page active">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1>订单管理</h1>
+          <p>查看和处理客户订单（共 ${ecomData.orders.length} 个订单）</p>
+        </div>
+        <button class="btn btn-outline" onclick="showToast('导出订单中...')">导出订单</button>
+      </div>
+
+      <div class="ecom-tabs">
+        <button class="ecom-tab active" onclick="ecomOrderFilter(this, 'all')">全部 (${ecomData.orders.length})</button>
+        <button class="ecom-tab" onclick="ecomOrderFilter(this, 'pending')">待支付 (${counts.pending || 0})</button>
+        <button class="ecom-tab" onclick="ecomOrderFilter(this, 'paid')">已支付 (${counts.paid || 0})</button>
+        <button class="ecom-tab" onclick="ecomOrderFilter(this, 'shipped')">已发货 (${counts.shipped || 0})</button>
+        <button class="ecom-tab" onclick="ecomOrderFilter(this, 'completed')">已完成 (${counts.completed || 0})</button>
+        <button class="ecom-tab" onclick="ecomOrderFilter(this, 'refunded')">已退款 (${counts.refunded || 0})</button>
+      </div>
+
+      <div class="ecom-table-card" style="padding: 0; overflow: hidden;">
+        <table class="ecom-table">
+          <thead>
+            <tr>
+              <th>订单号</th>
+              <th>客户</th>
+              <th>邮箱</th>
+              <th>商品数</th>
+              <th>金额</th>
+              <th>日期</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ecomData.orders.map((o, i) => `
+              <tr data-status="${o.status}">
+                <td style="font-family: monospace; font-weight: 600;">${o.id}</td>
+                <td style="font-weight: 500;">${o.customer}</td>
+                <td style="color: var(--text-secondary);">${o.email}</td>
+                <td>${o.items}</td>
+                <td style="font-weight: 700; color: var(--primary);">${o.total}</td>
+                <td style="color: var(--text-tertiary);">${o.date}</td>
+                <td><span class="ecom-status-badge ecom-status-${o.status}">${statusMap[o.status]}</span></td>
+                <td>
+                  <select onchange="updateOrderStatus(${i}, this.value)" style="padding:4px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;cursor:pointer;outline:none;background:var(--bg-primary);">
+                    <option value="">修改状态...</option>
+                    <option value="pending">待支付</option>
+                    <option value="paid">已支付</option>
+                    <option value="shipped">已发货</option>
+                    <option value="completed">已完成</option>
+                    <option value="refunded">已退款</option>
+                  </select>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function ecomOrderFilter(btn, status) {
+  document.querySelectorAll('.ecom-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const rows = document.querySelectorAll('.ecom-table tbody tr');
+  rows.forEach(row => {
+    if (status === 'all' || row.dataset.status === status) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
+function updateOrderStatus(index, newStatus) {
+  if (!newStatus) return;
+  const statusMap = { pending: '待支付', paid: '已支付', shipped: '已发货', completed: '已完成', refunded: '已退款' };
+  ecomData.orders[index].status = newStatus;
+  saveEcomData();
+  showToast(`订单状态已更新为「${statusMap[newStatus]}」`);
+  navigate('ecommerce-orders');
+}
+
+// 优惠券创建弹窗
+function openCouponModal() {
+  const icons = ['🎁','💰','🚚','⭐','🎟️','🔥','💎','🎯'];
+  const bgs = ['#FEF3C7','#D1FAE5','#DBEAFE','#E0E7FF','#FCE7F3','#FED7AA','#E0F2FE','#FAE8FF'];
+
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  modal.innerHTML = `
+    <div style="background:var(--bg-primary);border-radius:var(--radius-lg);padding:28px;width:460px;max-width:90vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <h3 style="font-size:18px;font-weight:700;">创建优惠券</h3>
+        <button onclick="this.closest('.modal-overlay').remove()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:20px;">&times;</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">活动图标</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            ${icons.map((ic, idx) => `<div onclick="this.parentElement.querySelectorAll('div').forEach(d=>{d.style.borderColor='var(--border)';d.style.background='var(--bg-secondary)';});this.style.borderColor='var(--primary)';this.style.background='var(--primary-bg)';document.getElementById('couponIconInput').value=this.textContent;" style="width:36px;height:36px;border-radius:var(--radius-md);border:2px solid ${idx===0?'var(--primary)':'var(--border)'};background:${idx===0?'var(--primary-bg)':'var(--bg-secondary)'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;">${ic}</div>`).join('')}
+          </div>
+          <input type="hidden" id="couponIconInput" value="🎁">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">活动名称 <span style="color:var(--danger);">*</span></label>
+          <input type="text" id="couponNameInput" placeholder="如：满 300 减 50" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">优惠码 <span style="color:var(--danger);">*</span></label>
+          <input type="text" id="couponCodeInput" placeholder="如：SAVE50" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;outline:none;font-family:monospace;text-transform:uppercase;">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">活动描述</label>
+          <input type="text" id="couponDescInput" placeholder="如：订单满 300 元立减 50 元" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;display:block;">发行总量</label>
+          <input type="number" id="couponTotalInput" value="1000" placeholder="1000" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;outline:none;">
+        </div>
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <button onclick="this.closest('.modal-overlay').remove()" style="flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;background:var(--bg-primary);color:var(--text-primary);">取消</button>
+          <button onclick="saveCoupon()" style="flex:1;padding:10px;border:none;border-radius:var(--radius-md);font-size:14px;font-weight:600;cursor:pointer;background:var(--primary);color:white;">创建优惠券</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+}
+
+function saveCoupon() {
+  const name = document.getElementById('couponNameInput').value.trim();
+  const code = document.getElementById('couponCodeInput').value.trim().toUpperCase();
+  const desc = document.getElementById('couponDescInput').value.trim() || '优惠活动';
+  const total = parseInt(document.getElementById('couponTotalInput').value) || 100;
+  const icon = document.getElementById('couponIconInput').value;
+  const bgs = ['#FEF3C7','#D1FAE5','#DBEAFE','#E0E7FF','#FCE7F3','#FED7AA'];
+  const bg = bgs[Math.floor(Math.random() * bgs.length)];
+
+  if (!name) { showToast('请输入活动名称'); return; }
+  if (!code) { showToast('请输入优惠码'); return; }
+
+  ecomData.coupons.push({ name, code, desc, icon, bg, used: 0, total });
+  saveEcomData();
+  showToast('优惠券已创建');
+  document.querySelector('.modal-overlay')?.remove();
+  navigate('ecommerce-marketing');
+}
+
+function deleteCoupon(index) {
+  const c = ecomData.coupons[index];
+  showConfirm(`确定要删除优惠券「${c.name}」吗？`, () => {
+    ecomData.coupons.splice(index, 1);
+    saveEcomData();
+    showToast('优惠券已删除');
+    navigate('ecommerce-marketing');
+  });
+}
+
+function renderEcommerceMarketing() {
+  return `
+    <div class="page active">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1>营销活动</h1>
+          <p>创建和管理促销活动、优惠券，提升店铺转化率</p>
+        </div>
+        <button class="btn btn-gradient" onclick="openCouponModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          创建活动
+        </button>
+      </div>
+
+      <div class="ecom-kpi-grid">
+        <div class="ecom-kpi-card">
+          <div class="ecom-kpi-label">活动总数</div>
+          <div class="ecom-kpi-value">${ecomData.coupons.length}</div>
+          <div class="ecom-kpi-change up">↑ 2 个进行中</div>
+        </div>
+        <div class="ecom-kpi-card">
+          <div class="ecom-kpi-label">优惠券使用</div>
+          <div class="ecom-kpi-value">${ecomData.coupons.reduce((s, c) => s + c.used, 0).toLocaleString()}</div>
+          <div class="ecom-kpi-change up">↑ 18.5%</div>
+        </div>
+        <div class="ecom-kpi-card">
+          <div class="ecom-kpi-label">活动收入</div>
+          <div class="ecom-kpi-value">¥42,680</div>
+          <div class="ecom-kpi-change up">↑ 23.2%</div>
+        </div>
+        <div class="ecom-kpi-card">
+          <div class="ecom-kpi-label">活动 ROI</div>
+          <div class="ecom-kpi-value">3.8x</div>
+          <div class="ecom-kpi-change up">↑ 0.3x</div>
+        </div>
+      </div>
+
+      <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 16px;">优惠券列表</h3>
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px;">
+        ${ecomData.coupons.map((c, ci) => {
+          const usagePercent = Math.round(c.used / c.total * 100);
+          return `
+            <div class="ecom-coupon-card">
+              <div class="ecom-coupon-icon" style="background: ${c.bg};">${c.icon}</div>
+              <div class="ecom-coupon-info">
+                <div class="ecom-coupon-name">${c.name}</div>
+                <div class="ecom-coupon-desc">${c.desc}</div>
+                <div style="margin-top: 8px; height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden;">
+                  <div style="height: 100%; width: ${usagePercent}%; background: var(--primary); border-radius: 3px;"></div>
+                </div>
+                <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">
+                  已使用 ${c.used} / ${c.total} (${usagePercent}%)
+                </div>
+              </div>
+              <div style="text-align: center;">
+                <div class="ecom-coupon-code">${c.code}</div>
+                <div style="display: flex; gap: 4px; justify-content: center; margin-top: 8px;">
+                  <button class="table-action-btn" onclick="showToast('复制优惠码: ${c.code}')" title="复制" style="color: var(--primary);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  </button>
+                  <button class="table-action-btn" onclick="deleteCoupon(${ci})" title="删除" style="color: var(--danger);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 16px;">促销活动效果</h3>
+      <div class="ecom-chart-grid">
+        <div class="ecom-chart-card">
+          <div class="ecom-chart-card-title">各渠道营销 ROI</div>
+          <div class="ecom-bar-chart">
+            ${[
+              { name: '限时促销', value: 42000, color: '#0D9488' },
+              { name: '满减活动', value: 35000, color: '#14B8A6' },
+              { name: '优惠券', value: 28000, color: '#2DD4BF' },
+              { name: '弹窗公告', value: 15000, color: '#5EEAD4' },
+              { name: '浮窗通知', value: 12000, color: '#F59E0B' }
+            ].map((c, _, arr) => {
+              const max = Math.max(...arr.map(x => x.value));
+              return `
+                <div class="ecom-bar-item">
+                  <div class="ecom-bar" style="height: ${(c.value / max * 100)}%; background: ${c.color};" data-value="¥${c.value.toLocaleString()}"></div>
+                  <div class="ecom-bar-label">${c.name}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+        <div class="ecom-chart-card">
+          <div class="ecom-chart-card-title">营销活动转化对比</div>
+          <table class="ecom-table" style="margin-top: 8px;">
+            <thead>
+              <tr><th>活动类型</th><th>参与人数</th><th>转化率</th><th>收入</th></tr>
+            </thead>
+            <tbody>
+              <tr><td style="font-weight: 500;">限时促销</td><td>1,820</td><td style="color: var(--success); font-weight: 600;">12.5%</td><td style="font-weight: 600;">¥18,200</td></tr>
+              <tr><td style="font-weight: 500;">满减活动</td><td>1,340</td><td style="color: var(--success); font-weight: 600;">9.8%</td><td style="font-weight: 600;">¥15,600</td></tr>
+              <tr><td style="font-weight: 500;">优惠券</td><td>2,123</td><td style="color: var(--success); font-weight: 600;">7.2%</td><td style="font-weight: 600;">¥12,400</td></tr>
+              <tr><td style="font-weight: 500;">弹窗公告</td><td>890</td><td style="color: var(--text-secondary); font-weight: 600;">4.1%</td><td style="font-weight: 600;">¥5,800</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ==================== Template Gallery ====================
+
+const siteTemplates = [
+  {
+    id: 'ecommerce',
+    name: '电商商城',
+    category: '电商',
+    badge: 'hot',
+    badgeText: '热门',
+    desc: '完整的电商解决方案，包含商品管理、订单处理、营销活动、数据分析等全套电商功能模块。',
+    tags: ['商城', '支付', '库存', '营销'],
+    uses: 12856,
+    rating: 4.9,
+    preview: 'ecommerce',
+    route: 'ecommerce-overview'
+  },
+  {
+    id: 'corporate',
+    name: '企业官网',
+    category: '企业',
+    badge: 'popular',
+    badgeText: '热门',
+    desc: '专业大气的企业展示网站，包含公司介绍、产品展示、新闻动态、联系方式等核心模块。',
+    tags: ['展示', '响应式', 'SEO', '多语言'],
+    uses: 8932,
+    rating: 4.8,
+    preview: 'corporate',
+    route: 'editor'
+  },
+  {
+    id: 'portfolio',
+    name: '个人作品集',
+    category: '个人',
+    badge: 'new',
+    badgeText: '新品',
+    desc: '展示个人作品和项目经历的精美作品集网站，支持图片画廊、项目详情和在线联系功能。',
+    tags: ['作品集', '画廊', '动画', '简历'],
+    uses: 5641,
+    rating: 4.7,
+    preview: 'portfolio',
+    route: 'editor'
+  },
+  {
+    id: 'blog',
+    name: '博客资讯',
+    category: '内容',
+    desc: '专注于内容创作的博客资讯网站，支持文章分类、标签筛选、搜索功能和评论系统。',
+    tags: ['博客', 'Markdown', 'RSS', '评论'],
+    uses: 7283,
+    rating: 4.6,
+    preview: 'blog',
+    route: 'editor'
+  },
+  {
+    id: 'landing',
+    name: '落地页',
+    category: '营销',
+    badge: 'hot',
+    badgeText: '热门',
+    desc: '高转化率营销落地页模板，包含 Hero 区域、功能展示、用户评价、价格表单和 CTA 按钮。',
+    tags: ['落地页', '高转化', 'A/B测试', '表单'],
+    uses: 9417,
+    rating: 4.8,
+    preview: 'landing',
+    route: 'landing-preview'
+  },
+  {
+    id: 'restaurant',
+    name: '餐饮美食',
+    category: '行业',
+    desc: '餐厅美食展示网站，包含电子菜单、在线订餐、门店位置、用户评价和预约功能。',
+    tags: ['餐饮', '菜单', '订餐', '预约'],
+    uses: 3294,
+    rating: 4.5,
+    preview: 'restaurant',
+    route: 'editor'
+  }
+];
+
+function getTemplatePreview(type) {
+  const previews = {
+    ecommerce: `<div class="tpl-preview-ecommerce">
+      <div class="mini-header">
+        <div class="mini-logo"></div>
+        <div class="mini-nav"><span style="width:20px"></span><span style="width:16px"></span><span style="width:24px"></span></div>
+      </div>
+      <div class="mini-products">
+        <div class="mini-product">
+          <div class="mini-product-img" style="background:#5eead4"></div>
+          <div class="mini-product-line" style="width:80%;background:#0D9488"></div>
+          <div class="mini-product-line" style="width:50%;background:#99f6e4"></div>
+        </div>
+        <div class="mini-product">
+          <div class="mini-product-img" style="background:#2dd4bf"></div>
+          <div class="mini-product-line" style="width:70%;background:#0D9488"></div>
+          <div class="mini-product-line" style="width:40%;background:#99f6e4"></div>
+        </div>
+        <div class="mini-product">
+          <div class="mini-product-img" style="background:#14b8a6"></div>
+          <div class="mini-product-line" style="width:90%;background:#0D9488"></div>
+          <div class="mini-product-line" style="width:60%;background:#99f6e4"></div>
+        </div>
+      </div>
+    </div>`,
+    corporate: `<div class="tpl-preview-corporate">
+      <div class="mini-hero">
+        <div class="mini-hero-line" style="width:60%"></div>
+        <div class="mini-hero-line" style="width:40%"></div>
+        <div class="mini-hero-btn"></div>
+      </div>
+      <div class="mini-cards">
+        <div class="mini-card">
+          <div style="height:16px;border-radius:4px;background:#475569"></div>
+          <div style="height:4px;border-radius:2px;background:#64748b"></div>
+          <div style="height:4px;width:60%;border-radius:2px;background:#64748b"></div>
+        </div>
+        <div class="mini-card">
+          <div style="height:16px;border-radius:4px;background:#475569"></div>
+          <div style="height:4px;border-radius:2px;background:#64748b"></div>
+          <div style="height:4px;width:60%;border-radius:2px;background:#64748b"></div>
+        </div>
+        <div class="mini-card">
+          <div style="height:16px;border-radius:4px;background:#475569"></div>
+          <div style="height:4px;border-radius:2px;background:#64748b"></div>
+          <div style="height:4px;width:60%;border-radius:2px;background:#64748b"></div>
+        </div>
+      </div>
+    </div>`,
+    portfolio: `<div class="tpl-preview-portfolio">
+      <div class="mini-avatar"></div>
+      <div class="mini-name"></div>
+      <div class="mini-projects">
+        <div class="mini-project" style="background:linear-gradient(135deg,#0D9488,#14B8A6)"></div>
+        <div class="mini-project" style="background:linear-gradient(135deg,#14B8A6,#2DD4BF)"></div>
+      </div>
+    </div>`,
+    blog: `<div class="tpl-preview-blog">
+      <div class="mini-blog-header"></div>
+      <div class="mini-blog-items">
+        <div class="mini-blog-item">
+          <div class="mini-blog-thumb" style="background:#FBBF24"></div>
+          <div class="mini-blog-lines">
+            <div style="height:4px;width:80%;border-radius:2px;background:#D97706"></div>
+            <div style="height:3px;width:60%;border-radius:2px;background:#FCD34D"></div>
+          </div>
+        </div>
+        <div class="mini-blog-item">
+          <div class="mini-blog-thumb" style="background:#F59E0B"></div>
+          <div class="mini-blog-lines">
+            <div style="height:4px;width:70%;border-radius:2px;background:#D97706"></div>
+            <div style="height:3px;width:50%;border-radius:2px;background:#FCD34D"></div>
+          </div>
+        </div>
+      </div>
+    </div>`,
+    landing: `<div class="tpl-preview-landing">
+      <div class="mini-landing-title"></div>
+      <div class="mini-landing-sub"></div>
+      <div class="mini-landing-btn"></div>
+    </div>`,
+    restaurant: `<div class="tpl-preview-restaurant">
+      <div class="mini-rest-header">
+        <div class="mini-rest-logo">🍜</div>
+      </div>
+      <div class="mini-menu">
+        <div class="mini-menu-item">
+          <div class="mini-menu-img" style="background:#FCA5A5"></div>
+          <div style="height:3px;width:70%;border-radius:2px;background:#DC2626"></div>
+        </div>
+        <div class="mini-menu-item">
+          <div class="mini-menu-img" style="background:#FECACA"></div>
+          <div style="height:3px;width:60%;border-radius:2px;background:#DC2626"></div>
+        </div>
+      </div>
+    </div>`
+  };
+  return previews[type] || previews.ecommerce;
+}
+
+function renderTemplateGallery() {
+  const categories = ['全部', '电商', '企业', '个人', '内容', '营销', '行业'];
+  return `
+    <div class="page active">
+      <div class="template-gallery-header">
+        <div class="template-gallery-title">
+          <h1>选择网站模板</h1>
+          <p>选择一个模板开始建站，每种模板都针对不同场景优化</p>
+        </div>
+        <button class="btn btn-outline" onclick="navigate('editor')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          从空白开始
+        </button>
+      </div>
+
+      <div class="template-category-bar">
+        ${categories.map((cat, i) => `
+          <button class="template-category-btn ${i === 0 ? 'active' : ''}" onclick="filterTemplates('${cat}', this)">${cat}</button>
+        `).join('')}
+      </div>
+
+      <div class="template-grid" id="templateGrid">
+        ${siteTemplates.map(t => `
+          <div class="template-card" data-category="${t.category}" onclick="useTemplate('${t.id}')">
+            <div class="template-preview">
+              ${getTemplatePreview(t.preview)}
+              <div class="template-preview-overlay">
+                <button onclick="event.stopPropagation(); useTemplate('${t.id}')">预览模板</button>
+              </div>
+            </div>
+            <div class="template-info">
+              <div class="template-info-header">
+                <div class="template-name">${t.name}</div>
+                ${t.badge ? `<span class="template-badge ${t.badge}">${t.badgeText}</span>` : ''}
+              </div>
+              <div class="template-desc">${t.desc}</div>
+              <div class="template-tags">
+                ${t.tags.map(tag => `<span class="template-tag">${tag}</span>`).join('')}
+              </div>
+              <div class="template-footer">
+                <div class="template-meta">
+                  <span>👤 ${(t.uses / 1000).toFixed(1)}K 使用</span>
+                  <span>⭐ ${t.rating}</span>
+                </div>
+                <button class="template-use-btn" onclick="event.stopPropagation(); useTemplate('${t.id}')">使用此模板</button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function filterTemplates(category, btn) {
+  document.querySelectorAll('.template-category-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('.template-card');
+  cards.forEach(card => {
+    if (category === '全部' || card.dataset.category === category) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+function useTemplate(templateId) {
+  const tpl = siteTemplates.find(t => t.id === templateId);
+  if (!tpl) return;
+  showToast(`已选择「${tpl.name}」模板，正在进入编辑器...`);
+  setTimeout(() => {
+    navigate(tpl.route);
+  }, 800);
 }
 </script>
 
