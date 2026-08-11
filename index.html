@@ -4396,12 +4396,16 @@ const DB = {
   offlineMode: false,
   CONFIG_KEY: 'buildora_supabase_config',
   OFFLINE_KEY: 'buildora_offline_data',
+  DEFAULT_URL: 'https://pmdqlzgnhlcuhuaocfau.supabase.co',
+  DEFAULT_KEY: 'sb_publishable_YEGibr522o9rDNMaRF5Zsg_wMVB7ezc',
 
   init() {
     const config = this.getConfig();
-    if (config.url && config.key) {
+    const url = config.url || this.DEFAULT_URL;
+    const key = config.key || this.DEFAULT_KEY;
+    if (url && key) {
       try {
-        this.client = supabase.createClient(config.url, config.key);
+        this.client = supabase.createClient(url, key);
       } catch(e) {
         console.error('Supabase init error:', e);
       }
@@ -6936,15 +6940,34 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// Initialize - check DB connection
-if (localStorage.getItem('buildora_offline_mode') === 'true') {
-  DB.offlineMode = true;
-  navigate('dashboard');
-} else if (!DB.isConnected()) {
-  showSupabaseConfig();
-} else {
-  navigate('dashboard');
+// Initialize - auto-connect with pre-configured Supabase credentials
+async function initApp() {
+  // Show loading state immediately
+  document.getElementById('contentWrapper').innerHTML = '<div class="loading-state"><div class="loading-spinner"></div><div class="loading-text">正在连接数据库...</div></div>';
+
+  if (localStorage.getItem('buildora_offline_mode') === 'true') {
+    DB.offlineMode = true;
+    navigate('dashboard');
+    return;
+  }
+
+  if (DB.isConnected()) {
+    // Test the connection by trying to fetch data
+    try {
+      await DB.get('clients');
+      navigate('dashboard');
+    } catch(e) {
+      console.warn('Supabase connection failed, falling back to offline mode:', e);
+      DB.offlineMode = true;
+      navigate('dashboard');
+    }
+  } else {
+    DB.offlineMode = true;
+    navigate('dashboard');
+  }
 }
+
+initApp();
 
 // ==================== E-commerce Module ====================
 
