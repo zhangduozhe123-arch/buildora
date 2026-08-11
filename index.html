@@ -4383,7 +4383,7 @@ body {
       3. 回到这里输入 URL 和 Key 连接
     </div>
     <div class="supabase-config-actions">
-      <button class="btn btn-outline" onclick="hideSupabaseConfig()">跳过（使用离线模式）</button>
+      <button class="btn btn-outline" onclick="skipToOfflineMode()">跳过（使用离线模式）</button>
       <button class="btn btn-gradient" onclick="connectSupabase()">连接数据库</button>
     </div>
   </div>
@@ -4393,7 +4393,9 @@ body {
 // ==================== Database Layer (Supabase) ====================
 const DB = {
   client: null,
+  offlineMode: false,
   CONFIG_KEY: 'buildora_supabase_config',
+  OFFLINE_KEY: 'buildora_offline_data',
 
   init() {
     const config = this.getConfig();
@@ -4404,6 +4406,54 @@ const DB = {
         console.error('Supabase init error:', e);
       }
     }
+  },
+
+  getOfflineData() {
+    try {
+      let data = JSON.parse(localStorage.getItem(this.OFFLINE_KEY) || 'null');
+      if (!data) {
+        data = this.getSeedData();
+        localStorage.setItem(this.OFFLINE_KEY, JSON.stringify(data));
+      }
+      return data;
+    } catch { return this.getSeedData(); }
+  },
+
+  saveOfflineData(table, records) {
+    let data = this.getOfflineData();
+    data[table] = records;
+    localStorage.setItem(this.OFFLINE_KEY, JSON.stringify(data));
+  },
+
+  getSeedData() {
+    return {
+      clients: [
+        { id: 'c1', name: '张明', email: 'zhangming@example.com', company: '明科技有限公司', status: 'active', plan: 'pro', created_at: '2026-07-15T10:00:00Z' },
+        { id: 'c2', name: '李娜', email: 'lina@example.com', company: '娜娜设计工作室', status: 'active', plan: 'starter', created_at: '2026-07-20T14:30:00Z' },
+        { id: 'c3', name: '王强', email: 'wangqiang@example.com', company: '强盛贸易', status: 'inactive', plan: 'free', created_at: '2026-06-10T09:00:00Z' },
+        { id: 'c4', name: 'Emily Chen', email: 'emily@example.com', company: 'Chen Studio', status: 'active', plan: 'pro', created_at: '2026-08-01T11:00:00Z' },
+        { id: 'c5', name: '赵雪', email: 'zhaoxue@example.com', company: '雪峰电商', status: 'active', plan: 'starter', created_at: '2026-08-05T16:00:00Z' }
+      ],
+      products: [
+        { id: 'p1', name: 'Buildora Pro', price: 299, status: 'active', category: '订阅', description: '专业版建站服务', created_at: '2026-07-01T00:00:00Z' },
+        { id: 'p2', name: 'Buildora Starter', price: 99, status: 'active', category: '订阅', description: '入门版建站服务', created_at: '2026-07-01T00:00:00Z' },
+        { id: 'p3', name: '自定义域名', price: 49, status: 'active', category: '增值服务', description: '绑定自定义域名', created_at: '2026-07-01T00:00:00Z' },
+        { id: 'p4', name: '白标定制', price: 199, status: 'active', category: '增值服务', description: '品牌完全定制', created_at: '2026-07-01T00:00:00Z' }
+      ],
+      projects: [
+        { id: 'pr1', name: '明科技官网', client: '张明', status: 'published', template: 'corporate', created_at: '2026-07-15T10:00:00Z' },
+        { id: 'pr2', name: '娜娜设计作品集', client: '李娜', status: 'draft', template: 'portfolio', created_at: '2026-07-20T14:30:00Z' },
+        { id: 'pr3', name: '强盛贸易商城', client: '王强', status: 'published', template: 'ecommerce', created_at: '2026-06-10T09:00:00Z' },
+        { id: 'pr4', name: 'Chen Studio Landing', client: 'Emily Chen', status: 'published', template: 'landing', created_at: '2026-08-01T11:00:00Z' }
+      ],
+      activities: [
+        { id: 'a1', text: '张明 创建了项目「明科技官网」', type: 'primary', time: '2 小时前' },
+        { id: 'a2', text: 'Emily Chen 升级到 Pro 计划', type: 'success', time: '5 小时前' },
+        { id: 'a3', text: '赵雪 注册了 Buildora 账户', type: 'primary', time: '1 天前' },
+        { id: 'a4', text: '李娜 的项目「娜娜设计作品集」已保存草稿', type: 'warning', time: '2 天前' },
+        { id: 'a5', text: '王强 发布了项目「强盛贸易商城」', type: 'success', time: '3 天前' }
+      ]
+    };
   },
 
   getConfig() {
@@ -4423,10 +4473,14 @@ const DB = {
   },
 
   isConnected() {
-    return this.client !== null;
+    return this.client !== null || this.offlineMode;
   },
 
   async get(table, orderBy = 'created_at') {
+    if (this.offlineMode) {
+      const data = this.getOfflineData();
+      return data[table] || [];
+    }
     if (!this.client) return [];
     const { data, error } = await this.client.from(table).select('*').order(orderBy, { ascending: false });
     if (error) { console.error(`DB.get(${table}) error:`, error); throw error; }
@@ -4434,6 +4488,10 @@ const DB = {
   },
 
   async getById(table, id) {
+    if (this.offlineMode) {
+      const data = this.getOfflineData();
+      return (data[table] || []).find(r => r.id === id) || null;
+    }
     if (!this.client) return null;
     const { data, error } = await this.client.from(table).select('*').eq('id', id).single();
     if (error) { console.error(`DB.getById(${table}) error:`, error); throw error; }
@@ -4441,6 +4499,14 @@ const DB = {
   },
 
   async insert(table, record) {
+    if (this.offlineMode) {
+      const data = this.getOfflineData();
+      const newRecord = { ...record, id: 'off_' + Date.now(), created_at: new Date().toISOString() };
+      data[table] = data[table] || [];
+      data[table].unshift(newRecord);
+      this.saveOfflineData(table, data[table]);
+      return newRecord;
+    }
     if (!this.client) throw new Error('数据库未连接');
     const { data, error } = await this.client.from(table).insert(record).select();
     if (error) { console.error(`DB.insert(${table}) error:`, error); throw error; }
@@ -4448,6 +4514,17 @@ const DB = {
   },
 
   async update(table, id, updates) {
+    if (this.offlineMode) {
+      const data = this.getOfflineData();
+      const records = data[table] || [];
+      const idx = records.findIndex(r => r.id === id);
+      if (idx >= 0) {
+        records[idx] = { ...records[idx], ...updates };
+        this.saveOfflineData(table, records);
+        return records[idx];
+      }
+      return null;
+    }
     if (!this.client) throw new Error('数据库未连接');
     const { data, error } = await this.client.from(table).update(updates).eq('id', id).select();
     if (error) { console.error(`DB.update(${table}) error:`, error); throw error; }
@@ -4455,6 +4532,12 @@ const DB = {
   },
 
   async delete(table, id) {
+    if (this.offlineMode) {
+      const data = this.getOfflineData();
+      data[table] = (data[table] || []).filter(r => r.id !== id);
+      this.saveOfflineData(table, data[table]);
+      return;
+    }
     if (!this.client) throw new Error('数据库未连接');
     const { error } = await this.client.from(table).delete().eq('id', id);
     if (error) { console.error(`DB.delete(${table}) error:`, error); throw error; }
@@ -4476,6 +4559,13 @@ function showSupabaseConfig() {
 
 function hideSupabaseConfig() {
   document.getElementById('supabaseConfigOverlay').classList.remove('active');
+}
+
+function skipToOfflineMode() {
+  document.getElementById('supabaseConfigOverlay').classList.remove('active');
+  DB.offlineMode = true;
+  localStorage.setItem('buildora_offline_mode', 'true');
+  navigate('dashboard');
 }
 
 async function connectSupabase() {
@@ -4547,6 +4637,8 @@ async function connectSupabase() {
     if (tablesExist) {
       statusEl.className = 'supabase-config-status success';
       statusEl.textContent = '✓ 连接成功！数据库已就绪';
+      DB.offlineMode = false;
+      localStorage.removeItem('buildora_offline_mode');
       showToast('Supabase 数据库连接成功！');
       setTimeout(() => {
         hideSupabaseConfig();
@@ -6845,7 +6937,10 @@ document.addEventListener('keydown', function(e) {
 });
 
 // Initialize - check DB connection
-if (!DB.isConnected()) {
+if (localStorage.getItem('buildora_offline_mode') === 'true') {
+  DB.offlineMode = true;
+  navigate('dashboard');
+} else if (!DB.isConnected()) {
   showSupabaseConfig();
 } else {
   navigate('dashboard');
