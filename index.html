@@ -4738,6 +4738,11 @@ function navigate(page) {
   Promise.resolve(config.render()).then(html => {
     document.getElementById('contentWrapper').innerHTML = html;
     updateActiveNav(config.title);
+    // Initialize editor after rendering
+    if (page === 'editor') {
+      const draftTpl = TemplateEngine.getDraft()?.template;
+      initEditor(draftTpl || 'corporate');
+    }
   }).catch(err => {
     document.getElementById('contentWrapper').innerHTML = `<div class="loading-state"><div style="font-size:48px;">⚠️</div><div class="loading-text">加载失败：${err.message}</div><button class="btn btn-gradient" style="margin-top:16px;" onclick="navigate('${page}')">重试</button></div>`;
   });
@@ -4876,20 +4881,32 @@ async function renderDashboard() {
 
       <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
         <div class="card">
-          <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">最近活动</h3>
-          <div style="display: flex; flex-direction: column; gap: 12px;">
-            ${activities.length === 0 ? '<div style="color: var(--text-muted); font-size: 14px; padding: 20px 0; text-align: center;">暂无活动记录</div>' :
-              activities.map(a => `
-                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--radius-md); background: var(--bg-gray);">
-                  <div style="width: 8px; height: 8px; border-radius: 50%; background: ${activityColors[a.type] || 'var(--primary)'};"></div>
-                  <div style="flex: 1;">
-                    <div style="font-size: 14px; font-weight: 500;">${a.text}</div>
-                    <div style="font-size: 12px; color: var(--text-muted);">${a.time || ''}</div>
-                  </div>
-                </div>
-              `).join('')
-            }
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h3 style="font-size: 16px; font-weight: 600;">我的网站</h3>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('projects')">查看全部 →</button>
           </div>
+          ${(() => {
+            const sites = TemplateEngine.getPublishedSites();
+            if (sites.length === 0) {
+              return `<div style="text-align:center;padding:32px 0">
+                <div style="font-size:40px;margin-bottom:8px">🌐</div>
+                <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px">还没有发布过网站</p>
+                <button class="btn btn-gradient btn-sm" onclick="navigate('editor')">开始建站</button>
+              </div>`;
+            }
+            return sites.slice(0, 4).map(s => `
+              <div style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--radius-md);background:var(--bg-gray);margin-bottom:8px;cursor:pointer" onclick="window.open('?site=${s.slug}','_blank')">
+                <div style="width:40px;height:40px;border-radius:8px;background:${s.template==='ecommerce'?'#0D9488':s.template==='portfolio'?'#6366F1':s.template==='landing'?'#0D9488':s.template==='blog'?'#F59E0B':s.template==='restaurant'?'#059669':'#0D9488'};display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">
+                  ${s.template==='ecommerce'?'🛒':s.template==='portfolio'?'🎨':s.template==='landing'?'🚀':s.template==='blog'?'📝':s.template==='restaurant'?'🍽️':'🏢'}
+                </div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.name}</div>
+                  <div style="font-size:12px;color:var(--text-muted)">${s.template} · ${new Date(s.created_at).toLocaleDateString('zh-CN')}</div>
+                </div>
+                <span style="font-size:11px;background:var(--success);color:#fff;padding:2px 8px;border-radius:10px;flex-shrink:0">已发布</span>
+              </div>
+            `).join('');
+          })()}
         </div>
 
         <div class="card">
@@ -5719,199 +5736,1125 @@ function renderWhiteLabelEmail() {
   `;
 }
 
+// ==================== Template Engine ====================
+const TemplateEngine = {
+  SITES_KEY: 'buildora_published_sites',
+  DRAFT_KEY: 'buildora_current_draft',
+
+  getDefaultContent(templateId) {
+    const defaults = {
+      corporate: {
+        template: 'corporate',
+        siteName: '明科技有限公司',
+        navLinks: ['首页', '产品', '解决方案', '关于我们', '联系我们'],
+        heroTitle: '用技术驱动业务创新',
+        heroSubtitle: '我们提供专业的数字化解决方案，帮助企业实现智能转型，提升运营效率',
+        heroCta: '了解更多',
+        aboutTitle: '关于我们',
+        aboutText: '明科技有限公司成立于 2015 年，专注于企业级软件开发和云计算服务。我们拥有一支经验丰富的技术团队，已为超过 500 家企业提供数字化转型方案。',
+        stats: [{ num: '500+', label: '服务客户' }, { num: '99.9%', label: '服务可用性' }, { num: '50+', label: '技术专利' }, { num: '24/7', label: '技术支持' }],
+        services: [
+          { icon: '💼', title: '企业软件开发', desc: '定制化的企业管理系统，涵盖 ERP、CRM、OA 等核心业务系统' },
+          { icon: '☁️', title: '云计算服务', desc: '基于公有云和私有云的混合架构方案，灵活、安全、可扩展' },
+          { icon: '📊', title: '数据分析', desc: '大数据采集、清洗、分析和可视化，让数据驱动业务决策' },
+          { icon: '🔒', title: '安全服务', desc: '全面的网络安全评估和防护方案，保障企业数据安全' }
+        ],
+        contactEmail: 'contact@mingtech.com',
+        contactPhone: '400-888-9999',
+        contactAddress: '北京市海淀区中关村软件园 8 号楼',
+        primaryColor: '#0D9488'
+      },
+      portfolio: {
+        template: 'portfolio',
+        siteName: '李娜设计',
+        navLinks: ['首页', '作品', '关于', '联系'],
+        heroTitle: '你好，我是李娜',
+        heroSubtitle: 'UI/UX 设计师 / 视觉创作者 / 专注于品牌设计与用户体验',
+        aboutText: '我是一名拥有 8 年经验的设计师，擅长品牌视觉设计、产品界面设计和交互动画。曾服务于多家知名互联网公司，作品获国内外设计奖项。',
+        skills: ['品牌设计', 'UI/UX', '插画', '动效设计', 'Figma', 'After Effects'],
+        projects: [
+          { title: '智云银行 App', category: '移动端设计', desc: '为智云银行打造的全新移动 banking 体验' },
+          { title: '绿野茶品牌', category: '品牌设计', desc: '从 logo 到包装的完整品牌视觉系统' },
+          { title: '健康手环 UI', category: '产品设计', desc: '智能健康手环的界面设计与交互方案' },
+          { title: '艺术展览网站', category: '网页设计', desc: '当代艺术展览的沉浸式官网体验' }
+        ],
+        contactEmail: 'lina@design.com',
+        socialGithub: 'https://github.com/lina',
+        socialDribbble: 'https://dribbble.com/lina',
+        primaryColor: '#6366F1'
+      },
+      landing: {
+        template: 'landing',
+        siteName: 'Buildora',
+        navLinks: ['功能', '价格', '案例', 'FAQ'],
+        heroTitle: '用 AI 快速建站，无需代码',
+        heroSubtitle: '从设计到上线，只需几分钟。Buildora 让每个人都能轻松创建专业网站。',
+        heroCta: '免费开始',
+        features: [
+          { icon: '🤖', title: 'AI 智能生成', desc: '描述需求，AI 自动生成网站布局和内容' },
+          { icon: '🎨', title: '精美模板', desc: '100+ 专业设计模板，覆盖各种行业场景' },
+          { icon: '📱', title: '响应式设计', desc: '完美适配手机、平板和桌面端' },
+          { icon: '⚡', title: '极速上线', desc: '一键发布，秒级部署到全球 CDN' }
+        ],
+        pricing: [
+          { name: '免费版', price: '¥0', period: '/月', features: ['1 个网站', '基础模板', 'Buildora 子域名', '社区支持'] },
+          { name: '专业版', price: '¥99', period: '/月', features: ['10 个网站', '全部模板', '自定义域名', '优先支持', '去除广告'], popular: true },
+          { name: '企业版', price: '¥299', period: '/月', features: ['无限网站', '白标定制', '团队协作', 'API 接入', '专属客服'] }
+        ],
+        faqs: [
+          { q: '需要编程基础吗？', a: '完全不需要。Buildora 采用可视化编辑，AI 辅助生成，任何人都可以使用。' },
+          { q: '可以自定义域名吗？', a: '专业版和企业版支持绑定自定义域名，免费版使用 Buildora 子域名。' },
+          { q: '支持电商功能吗？', a: '支持。我们提供完整的电商模板，包括商品管理、订单处理和支付接入。' }
+        ],
+        ctaTitle: '准备好开始了吗？',
+        ctaSubtitle: '立即创建你的第一个网站，加入 10 万+ 用户的行列',
+        primaryColor: '#0D9488'
+      },
+      blog: {
+        template: 'blog',
+        siteName: '技术随笔',
+        navLinks: ['首页', '分类', '关于'],
+        heroTitle: '记录技术与思考',
+        heroSubtitle: '分享编程心得、产品设计和创业故事',
+        posts: [
+          { title: '2026 年前端开发趋势展望', date: '2026-08-10', category: '前端', excerpt: '从 AI 辅助编码到 WebAssembly，前端开发正在经历新的变革...' },
+          { title: '如何设计高转化的落地页', date: '2026-08-05', category: '设计', excerpt: '一个好的落地页需要考虑用户心理、视觉层级和行动路径...' },
+          { title: 'Supabase 实战：从零搭建全栈应用', date: '2026-07-28', category: '后端', excerpt: 'Supabase 作为 Firebase 的开源替代方案，提供了数据库、认证、存储等一站式服务...' },
+          { title: '创业者需要知道的 10 件事', date: '2026-07-20', category: '创业', excerpt: '从 0 到 1 的过程中，有些坑可以避免，有些经验必须亲历...' }
+        ],
+        aboutText: '本博客由 Buildora 驱动，记录技术成长与思考。',
+        primaryColor: '#F59E0B'
+      },
+      restaurant: {
+        template: 'restaurant',
+        siteName: '绿野仙踪餐厅',
+        navLinks: ['首页', '菜单', '预约', '关于'],
+        heroTitle: '新鲜食材，匠心烹饪',
+        heroSubtitle: '每一道菜都是对食材的尊重和对味道的追求',
+        heroCta: '立即预约',
+        menu: [
+          { category: '招牌菜品', items: [
+            { name: '松露和牛汉堡', price: '¥168', desc: '澳洲 M5 和牛搭配黑松露酱汁' },
+            { name: '香煎银鳕鱼', price: '¥198', desc: '挪威银鳕鱼配柠檬黄油汁' },
+            { name: '松茸蘑菇汤', price: '¥88', desc: '新鲜松茸熬制，浓郁鲜美' }
+          ]},
+          { category: '主厨推荐', items: [
+            { name: '和牛牛排', price: '¥388', desc: '日本 A5 和牛，炭火烤制' },
+            { name: '龙虾意面', price: '¥228', desc: '波士顿龙虾配手工意面' },
+            { name: '分子料理甜点', price: '¥98', desc: '主厨创意甜点，每日限量' }
+          ]},
+          { category: '饮品', items: [
+            { name: '手冲咖啡', price: '¥48', desc: '精选埃塞俄比亚单品豆' },
+            { name: '鲜榨果汁', price: '¥38', desc: '当日新鲜水果' },
+            { name: '红酒一杯', price: '¥68', desc: '法国波尔多产区' }
+          ]}
+        ],
+        aboutText: '绿野仙踪餐厅创立于 2018 年，主打现代创意料理。我们坚持从有机农场直采食材，用心做好每一道菜。',
+        hours: '午餐 11:00-14:00 / 晚餐 17:00-22:00',
+        address: '上海市静安区南京西路 1788 号',
+        phone: '021-6688-9999',
+        primaryColor: '#059669'
+      },
+      ecommerce: {
+        template: 'ecommerce',
+        siteName: '潮流数码',
+        navLinks: ['首页', '新品', '热卖', '关于'],
+        heroTitle: '科技改变生活',
+        heroSubtitle: '精选优质数码产品，畅享智能生活',
+        heroCta: '立即选购',
+        products: [
+          { name: '智能蓝牙耳机 Pro', price: '¥199', oldPrice: '¥299', icon: '🎧', desc: '主动降噪 / 蓝牙 5.3 / 36h 续航' },
+          { name: '无线充电器', price: '¥99', oldPrice: '¥149', icon: '🔌', desc: '15W 快充 / 兼容 Qi 协议' },
+          { name: '便携咖啡机', price: '¥299', oldPrice: '¥399', icon: '☕', desc: 'USB 充电 / 一键萃取' },
+          { name: '运动手环 5', price: '¥199', oldPrice: '¥259', icon: '⌚', desc: '心率监测 / 50m 防水' },
+          { name: '机械键盘', price: '¥299', oldPrice: '¥449', icon: '⌨️', desc: '热插拔 / RGB 灯光' },
+          { name: '智能台灯', price: '¥159', oldPrice: '¥199', icon: '💡', desc: '无极调光 / 护眼模式' }
+        ],
+        aboutText: '潮流数码专营高品质数码产品，所有商品均提供正品保证和 7 天无理由退换。',
+        primaryColor: '#0D9488'
+      }
+    };
+    return defaults[templateId] || defaults.corporate;
+  },
+
+  wrap(innerContent, title, primaryColor) {
+    return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1F2937;line-height:1.6}
+a{text-decoration:none;color:inherit}
+img{max-width:100%}
+.container{max-width:1140px;margin:0 auto;padding:0 24px}
+.btn{display:inline-block;padding:12px 28px;border-radius:8px;font-weight:600;font-size:15px;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:${primaryColor};color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-outline{background:transparent;border:2px solid ${primaryColor};color:${primaryColor}}
+section{padding:80px 0}
+</style>
+</head>
+<body>
+${innerContent}
+</body>
+</html>`;
+  },
+
+  generate(templateId, content) {
+    content = content || this.getDefaultContent(templateId);
+    const generators = {
+      corporate: () => this.genCorporate(content),
+      portfolio: () => this.genPortfolio(content),
+      landing: () => this.genLanding(content),
+      blog: () => this.genBlog(content),
+      restaurant: () => this.genRestaurant(content),
+      ecommerce: () => this.genEcommerce(content)
+    };
+    return (generators[templateId] || generators.corporate)();
+  },
+
+  genCorporate(c) {
+    const p = c.primaryColor || '#0D9488';
+    return this.wrap(`
+<nav style="position:sticky;top:0;background:#fff;border-bottom:1px solid #E5E7EB;z-index:100;padding:16px 0">
+<div class="container" style="display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:20px;font-weight:800;color:${p}">${c.siteName}</div>
+<div style="display:flex;gap:28px">
+${(c.navLinks||[]).map(l=>`<a href="#" style="font-size:14px;font-weight:500;color:#6B7280">${l}</a>`).join('')}
+</div>
+</div>
+</nav>
+<section style="background:linear-gradient(135deg,${p}15 0%,${p}05 100%);text-align:center;padding:100px 0">
+<div class="container">
+<h1 style="font-size:48px;font-weight:800;margin-bottom:16px;color:#1F2937">${c.heroTitle}</h1>
+<p style="font-size:18px;color:#6B7280;max-width:600px;margin:0 auto 32px">${c.heroSubtitle}</p>
+<button class="btn btn-primary">${c.heroCta}</button>
+</div>
+</section>
+<section><div class="container">
+<h2 style="font-size:32px;font-weight:700;text-align:center;margin-bottom:16px">${c.aboutTitle}</h2>
+<p style="font-size:16px;color:#6B7280;max-width:700px;margin:0 auto 60px;text-align:center">${c.aboutText}</p>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px">
+${(c.stats||[]).map(s=>`<div style="text-align:center;padding:32px 16px;background:#F9FAFB;border-radius:12px"><div style="font-size:36px;font-weight:800;color:${p}">${s.num}</div><div style="font-size:14px;color:#6B7280;margin-top:8px">${s.label}</div></div>`).join('')}
+</div>
+</div></section>
+<section style="background:#F9FAFB"><div class="container">
+<h2 style="font-size:32px;font-weight:700;text-align:center;margin-bottom:48px">核心服务</h2>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px">
+${(c.services||[]).map(s=>`<div style="padding:32px;background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)"><div style="font-size:40px;margin-bottom:16px">${s.icon}</div><h3 style="font-size:18px;font-weight:700;margin-bottom:8px">${s.title}</h3><p style="font-size:14px;color:#6B7280">${s.desc}</p></div>`).join('')}
+</div>
+</div></section>
+<footer style="background:#1F2937;color:#fff;padding:48px 0">
+<div class="container" style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px">
+<div><h3 style="font-size:16px;font-weight:700;margin-bottom:16px">${c.siteName}</h3><p style="font-size:13px;color:#9CA3AF">${c.aboutText.substring(0,80)}...</p></div>
+<div><h3 style="font-size:16px;font-weight:700;margin-bottom:16px">联系方式</h3><p style="font-size:13px;color:#9CA3AF">📧 ${c.contactEmail}</p><p style="font-size:13px;color:#9CA3AF">📞 ${c.contactPhone}</p><p style="font-size:13px;color:#9CA3AF">📍 ${c.contactAddress}</p></div>
+<div><h3 style="font-size:16px;font-weight:700;margin-bottom:16px">快速链接</h3>${(c.navLinks||[]).map(l=>`<div style="margin-bottom:8px"><a href="#" style="font-size:13px;color:#9CA3AF">${l}</a></div>`).join('')}</div>
+</div>
+<div style="text-align:center;padding-top:32px;margin-top:32px;border-top:1px solid #374151;font-size:13px;color:#9CA3AF">© 2026 ${c.siteName}. All rights reserved. Powered by Buildora.</div>
+</footer>
+`, c.siteName, p);
+  },
+
+  genPortfolio(c) {
+    const p = c.primaryColor || '#6366F1';
+    return this.wrap(`
+<nav style="position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid #E5E7EB;z-index:100;padding:16px 0">
+<div class="container" style="display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:22px;font-weight:800;color:${p}">${c.siteName}</div>
+<div style="display:flex;gap:28px">${(c.navLinks||[]).map(l=>`<a href="#" style="font-size:14px;font-weight:500;color:#6B7280">${l}</a>`).join('')}</div>
+</div>
+</nav>
+<section style="text-align:center;padding:120px 0;background:linear-gradient(180deg,${p}08 0%,transparent 100%)">
+<div class="container">
+<div style="width:100px;height:100px;border-radius:50%;background:${p};margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-size:40px;color:#fff;font-weight:800">L</div>
+<h1 style="font-size:42px;font-weight:800;margin-bottom:12px">${c.heroTitle}</h1>
+<p style="font-size:18px;color:#6B7280;max-width:500px;margin:0 auto 32px">${c.heroSubtitle}</p>
+<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">${(c.skills||[]).map(s=>`<span style="padding:6px 16px;background:${p}15;color:${p};border-radius:20px;font-size:13px;font-weight:500">${s}</span>`).join('')}</div>
+</div>
+</section>
+<section><div class="container">
+<h2 style="font-size:32px;font-weight:700;text-align:center;margin-bottom:48px">精选作品</h2>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px">
+${(c.projects||[]).map(pr=>`<div style="border-radius:16px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08);cursor:pointer;transition:transform .2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+<div style="height:200px;background:linear-gradient(135deg,${p} 0%,${p}99 100%);display:flex;align-items:center;justify-content:center;font-size:48px">${pr.title.charAt(0)}</div>
+<div style="padding:24px"><span style="font-size:12px;color:${p};font-weight:600;text-transform:uppercase">${pr.category}</span><h3 style="font-size:18px;font-weight:700;margin:8px 0">${pr.title}</h3><p style="font-size:14px;color:#6B7280">${pr.desc}</p></div>
+</div>`).join('')}
+</div>
+</div></section>
+<section style="background:#F9FAFB"><div class="container" style="max-width:700px;text-align:center">
+<h2 style="font-size:32px;font-weight:700;margin-bottom:24px">关于我</h2>
+<p style="font-size:16px;color:#6B7280;line-height:1.8">${c.aboutText}</p>
+</div></section>
+<footer style="background:#1F2937;color:#fff;padding:48px 0;text-align:center">
+<div class="container">
+<div style="display:flex;gap:24px;justify-content:center;margin-bottom:24px">
+<a href="${c.socialGithub||'#'}" style="color:#9CA3AF;font-size:14px">GitHub</a><a href="${c.socialDribbble||'#'}" style="color:#9CA3AF;font-size:14px">Dribbble</a><a href="mailto:${c.contactEmail}" style="color:#9CA3AF;font-size:14px">Email</a>
+</div>
+<p style="font-size:13px;color:#9CA3AF">© 2026 ${c.siteName}. Powered by Buildora.</p>
+</div>
+</footer>
+`, c.siteName, p);
+  },
+
+  genLanding(c) {
+    const p = c.primaryColor || '#0D9488';
+    return this.wrap(`
+<nav style="position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid #E5E7EB;z-index:100;padding:16px 0">
+<div class="container" style="display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:22px;font-weight:800;color:${p}">${c.siteName}</div>
+<div style="display:flex;gap:28px">${(c.navLinks||[]).map(l=>`<a href="#" style="font-size:14px;font-weight:500;color:#6B7280">${l}</a>`).join('')}</div>
+<button class="btn btn-primary" style="padding:8px 20px;font-size:14px">免费开始</button>
+</div>
+</nav>
+<section style="text-align:center;padding:120px 0;background:linear-gradient(180deg,${p}10 0%,transparent 100%)">
+<div class="container">
+<h1 style="font-size:52px;font-weight:800;margin-bottom:20px;line-height:1.2">${c.heroTitle}</h1>
+<p style="font-size:20px;color:#6B7280;max-width:600px;margin:0 auto 36px">${c.heroSubtitle}</p>
+<button class="btn btn-primary" style="font-size:18px;padding:16px 40px">${c.heroCta}</button>
+</div>
+</section>
+<section><div class="container">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px">
+${(c.features||[]).map(f=>`<div style="text-align:center;padding:32px 20px;border-radius:12px;border:1px solid #E5E7EB"><div style="font-size:40px;margin-bottom:16px">${f.icon}</div><h3 style="font-size:16px;font-weight:700;margin-bottom:8px">${f.title}</h3><p style="font-size:13px;color:#6B7280">${f.desc}</p></div>`).join('')}
+</div>
+</div></section>
+<section style="background:#F9FAFB"><div class="container">
+<h2 style="font-size:32px;font-weight:700;text-align:center;margin-bottom:48px">价格方案</h2>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:900px;margin:0 auto">
+${(c.pricing||[]).map(pr=>`<div style="padding:36px 28px;background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:${pr.popular?'2px solid '+p:'1px solid #E5E7EB'};position:relative">
+${pr.popular?`<div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:${p};color:#fff;font-size:12px;font-weight:600;padding:4px 16px;border-radius:12px">最受欢迎</div>`:''}
+<h3 style="font-size:18px;font-weight:700;margin-bottom:8px">${pr.name}</h3>
+<div style="font-size:36px;font-weight:800;color:${p};margin-bottom:16px">${pr.price}<span style="font-size:14px;color:#9CA3AF;font-weight:400">${pr.period}</span></div>
+${(pr.features||[]).map(f=>`<div style="font-size:14px;color:#6B7280;margin-bottom:8px">✓ ${f}</div>`).join('')}
+<button class="btn ${pr.popular?'btn-primary':'btn-outline'}" style="width:100%;margin-top:20px">选择${pr.name}</button>
+</div>`).join('')}
+</div>
+</div></section>
+<section><div class="container" style="max-width:700px">
+<h2 style="font-size:28px;font-weight:700;text-align:center;margin-bottom:40px">常见问题</h2>
+${(c.faqs||[]).map(f=>`<div style="padding:20px 0;border-bottom:1px solid #E5E7EB"><h3 style="font-size:16px;font-weight:600;margin-bottom:8px">${f.q}</h3><p style="font-size:14px;color:#6B7280">${f.a}</p></div>`).join('')}
+</div></section>
+<section style="background:${p};color:#fff;text-align:center;padding:80px 0">
+<div class="container">
+<h2 style="font-size:32px;font-weight:800;margin-bottom:12px">${c.ctaTitle}</h2>
+<p style="font-size:16px;opacity:.9;margin-bottom:28px">${c.ctaSubtitle}</p>
+<button class="btn" style="background:#fff;color:${p};font-size:18px;padding:16px 40px">${c.heroCta}</button>
+</div>
+</section>
+<footer style="background:#1F2937;color:#fff;padding:32px 0;text-align:center"><div class="container"><p style="font-size:13px;color:#9CA3AF">© 2026 ${c.siteName}. Powered by Buildora.</p></div></footer>
+`, c.siteName, p);
+  },
+
+  genBlog(c) {
+    const p = c.primaryColor || '#F59E0B';
+    return this.wrap(`
+<nav style="position:sticky;top:0;background:#fff;border-bottom:1px solid #E5E7EB;z-index:100;padding:16px 0">
+<div class="container" style="display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:22px;font-weight:800;color:${p}">${c.siteName}</div>
+<div style="display:flex;gap:28px">${(c.navLinks||[]).map(l=>`<a href="#" style="font-size:14px;font-weight:500;color:#6B7280">${l}</a>`).join('')}</div>
+</div>
+</nav>
+<section style="text-align:center;padding:80px 0;background:${p}08">
+<div class="container">
+<h1 style="font-size:42px;font-weight:800;margin-bottom:12px">${c.heroTitle}</h1>
+<p style="font-size:18px;color:#6B7280">${c.heroSubtitle}</p>
+</div>
+</section>
+<section><div class="container" style="max-width:800px">
+${(c.posts||[]).map((post,i)=>`<article style="padding:32px 0;border-bottom:1px solid #E5E7EB;${i===0?'border-top:1px solid #E5E7EB':''}">
+<div style="display:flex;gap:16px;align-items:center;margin-bottom:12px">
+<span style="padding:4px 12px;background:${p}15;color:${p};border-radius:12px;font-size:12px;font-weight:600">${post.category}</span>
+<span style="font-size:13px;color:#9CA3AF">${post.date}</span>
+</div>
+<h2 style="font-size:24px;font-weight:700;margin-bottom:8px"><a href="#" style="color:#1F2937">${post.title}</a></h2>
+<p style="font-size:15px;color:#6B7280">${post.excerpt}</p>
+<a href="#" style="display:inline-block;margin-top:12px;color:${p};font-size:14px;font-weight:600">阅读全文 →</a>
+</article>`).join('')}
+</div></section>
+<section style="background:#F9FAFB;text-align:center;padding:48px 0">
+<div class="container"><p style="font-size:14px;color:#6B7280">${c.aboutText}</p></div>
+</section>
+<footer style="background:#1F2937;color:#fff;padding:32px 0;text-align:center"><div class="container"><p style="font-size:13px;color:#9CA3AF">© 2026 ${c.siteName}. Powered by Buildora.</p></div></footer>
+`, c.siteName, p);
+  },
+
+  genRestaurant(c) {
+    const p = c.primaryColor || '#059669';
+    return this.wrap(`
+<nav style="position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid #E5E7EB;z-index:100;padding:16px 0">
+<div class="container" style="display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:22px;font-weight:800;color:${p}">${c.siteName}</div>
+<div style="display:flex;gap:28px">${(c.navLinks||[]).map(l=>`<a href="#" style="font-size:14px;font-weight:500;color:#6B7280">${l}</a>`).join('')}</div>
+</div>
+</nav>
+<section style="height:500px;background:linear-gradient(135deg,${p} 0%,${p}CC 100%);display:flex;align-items:center;justify-content:center;text-align:center;color:#fff">
+<div class="container">
+<h1 style="font-size:48px;font-weight:800;margin-bottom:16px">${c.heroTitle}</h1>
+<p style="font-size:20px;opacity:.9;margin-bottom:32px">${c.heroSubtitle}</p>
+<button class="btn" style="background:#fff;color:${p};font-size:18px;padding:16px 40px">${c.heroCta}</button>
+</div>
+</section>
+<section><div class="container" style="max-width:800px">
+<h2 style="font-size:36px;font-weight:700;text-align:center;margin-bottom:48px">菜单</h2>
+${(c.menu||[]).map(cat=>`<div style="margin-bottom:48px">
+<h3 style="font-size:22px;font-weight:700;color:${p};margin-bottom:24px;padding-bottom:8px;border-bottom:2px solid ${p}20">${cat.category}</h3>
+${(cat.items||[]).map(item=>`<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:16px 0;border-bottom:1px dashed #E5E7EB">
+<div><div style="font-size:16px;font-weight:600">${item.name}</div><div style="font-size:13px;color:#9CA3AF;margin-top:4px">${item.desc}</div></div>
+<div style="font-size:18px;font-weight:700;color:${p};white-space:nowrap;margin-left:16px">${item.price}</div>
+</div>`).join('')}
+</div>`).join('')}
+</div></section>
+<section style="background:#F9FAFB"><div class="container">
+<h2 style="font-size:32px;font-weight:700;text-align:center;margin-bottom:32px">关于我们</h2>
+<p style="font-size:16px;color:#6B7280;max-width:600px;margin:0 auto;text-align:center">${c.aboutText}</p>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;text-align:center">
+<div style="padding:24px;background:#fff;border-radius:12px"><div style="font-size:24px;margin-bottom:8px">🕐</div><div style="font-size:14px;font-weight:600">营业时间</div><div style="font-size:13px;color:#6B7280;margin-top:4px">${c.hours}</div></div>
+<div style="padding:24px;background:#fff;border-radius:12px"><div style="font-size:24px;margin-bottom:8px">📍</div><div style="font-size:14px;font-weight:600">地址</div><div style="font-size:13px;color:#6B7280;margin-top:4px">${c.address}</div></div>
+<div style="padding:24px;background:#fff;border-radius:12px"><div style="font-size:24px;margin-bottom:8px">📞</div><div style="font-size:14px;font-weight:600">电话</div><div style="font-size:13px;color:#6B7280;margin-top:4px">${c.phone}</div></div>
+</div>
+</div></section>
+<footer style="background:#1F2937;color:#fff;padding:32px 0;text-align:center"><div class="container"><p style="font-size:13px;color:#9CA3AF">© 2026 ${c.siteName}. Powered by Buildora.</p></div></footer>
+`, c.siteName, p);
+  },
+
+  genEcommerce(c) {
+    const p = c.primaryColor || '#0D9488';
+    return this.wrap(`
+<nav style="position:sticky;top:0;background:#fff;border-bottom:1px solid #E5E7EB;z-index:100;padding:16px 0">
+<div class="container" style="display:flex;justify-content:space-between;align-items:center">
+<div style="font-size:22px;font-weight:800;color:${p}">${c.siteName}</div>
+<div style="display:flex;gap:28px">${(c.navLinks||[]).map(l=>`<a href="#" style="font-size:14px;font-weight:500;color:#6B7280">${l}</a>`).join('')}</div>
+<div style="font-size:20px">🛒</div>
+</div>
+</nav>
+<section style="text-align:center;padding:80px 0;background:linear-gradient(135deg,${p}10 0%,${p}05 100%)">
+<div class="container">
+<h1 style="font-size:42px;font-weight:800;margin-bottom:16px">${c.heroTitle}</h1>
+<p style="font-size:18px;color:#6B7280;margin-bottom:32px">${c.heroSubtitle}</p>
+<button class="btn btn-primary">${c.heroCta}</button>
+</div>
+</section>
+<section><div class="container">
+<h2 style="font-size:28px;font-weight:700;margin-bottom:32px">热门商品</h2>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+${(c.products||[]).map(pr=>`<div style="border:1px solid #E5E7EB;border-radius:12px;overflow:hidden;cursor:pointer;transition:box-shadow .2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,.1)'" onmouseout="this.style.boxShadow=''">
+<div style="height:200px;background:${p}10;display:flex;align-items:center;justify-content:center;font-size:64px">${pr.icon}</div>
+<div style="padding:20px">
+<h3 style="font-size:16px;font-weight:600;margin-bottom:4px">${pr.name}</h3>
+<p style="font-size:13px;color:#9CA3AF;margin-bottom:12px">${pr.desc}</p>
+<div style="display:flex;align-items:center;gap:8px">
+<span style="font-size:20px;font-weight:800;color:${p}">${pr.price}</span>
+<span style="font-size:14px;color:#9CA3AF;text-decoration:line-through">${pr.oldPrice}</span>
+</div>
+<button class="btn btn-primary" style="width:100%;margin-top:12px;padding:10px">加入购物车</button>
+</div>
+</div>`).join('')}
+</div>
+</div></section>
+<section style="background:#F9FAFB;text-align:center;padding:48px 0">
+<div class="container"><p style="font-size:14px;color:#6B7280">${c.aboutText}</p></div>
+</section>
+<footer style="background:#1F2937;color:#fff;padding:32px 0;text-align:center"><div class="container"><p style="font-size:13px;color:#9CA3AF">© 2026 ${c.siteName}. Powered by Buildora.</p></div></footer>
+`, c.siteName, p);
+  },
+
+  // Save draft to localStorage
+  saveDraft(content) {
+    localStorage.setItem(this.DRAFT_KEY, JSON.stringify(content));
+  },
+
+  getDraft() {
+    try { return JSON.parse(localStorage.getItem(this.DRAFT_KEY) || 'null'); }
+    catch { return null; }
+  },
+
+  // Publish site - save to localStorage (and Supabase if connected)
+  async publish(siteName, templateId, content) {
+    const html = this.generate(templateId, content);
+    const slug = (siteName || 'site').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
+    const site = {
+      id: 'site_' + Date.now(),
+      slug: slug,
+      name: siteName,
+      template: templateId,
+      content: content,
+      html: html,
+      status: 'published',
+      created_at: new Date().toISOString()
+    };
+
+    // Save to localStorage
+    const sites = this.getPublishedSites();
+    sites.unshift(site);
+    localStorage.setItem(this.SITES_KEY, JSON.stringify(sites));
+
+    // Also try to save to Supabase if connected
+    if (DB.client && !DB.offlineMode) {
+      try {
+        await DB.insert('websites', {
+          slug: slug,
+          name: siteName,
+          template_id: templateId,
+          content: content,
+          html_content: html,
+          status: 'published',
+          title: siteName
+        });
+      } catch(e) {
+        console.warn('Supabase publish failed, saved locally only:', e);
+      }
+    }
+
+    // Also create/update a project record
+    if (DB.isConnected()) {
+      try {
+        await DB.insert('projects', {
+          name: siteName,
+          status: 'published',
+          template: templateId,
+          domain: slug
+        });
+      } catch(e) {
+        console.warn('Project creation failed:', e);
+      }
+    }
+
+    return site;
+  },
+
+  getPublishedSites() {
+    try { return JSON.parse(localStorage.getItem(this.SITES_KEY) || '[]'); }
+    catch { return []; }
+  },
+
+  getSiteBySlug(slug) {
+    return this.getPublishedSites().find(s => s.slug === slug);
+  },
+
+  // AI Editor - rule-based content modification
+  applyAIInstruction(content, instruction) {
+    const c = JSON.parse(JSON.stringify(content));
+    const inst = instruction.trim();
+    const instLower = inst.toLowerCase();
+
+    // Change site name
+    const nameMatch = inst.match(/(?:网站名|站点名|名字|品牌名|公司名).*(?:改成|改为|改为|换成|叫|设置)\s*(.+)/);
+    if (nameMatch) { c.siteName = nameMatch[1].trim(); return { content: c, reply: `已将网站名称改为「${c.siteName}」` }; }
+
+    // Change hero title
+    const heroMatch = inst.match(/(?:标题|大标题|主标题|hero|首屏标题|头部标题).*(?:改成|改为|换成|设置)\s*(.+)/);
+    if (heroMatch) { c.heroTitle = heroMatch[1].trim(); return { content: c, reply: `已将主标题改为「${c.heroTitle}」` }; }
+
+    // Change subtitle
+    const subMatch = inst.match(/(?:副标题|描述|说明|subtitle|子标题|副文).*(?:改成|改为|换成|设置)\s*(.+)/);
+    if (subMatch) { c.heroSubtitle = subMatch[1].trim(); return { content: c, reply: `已将副标题改为「${c.heroSubtitle}」` }; }
+
+    // Change color
+    const colorMap = { '蓝色': '#3B82F6', '红色': '#EF4444', '绿色': '#10B981', '紫色': '#8B5CF6', '橙色': '#F59E0B', '青色': '#0D9488', '粉色': '#EC4899', '黑色': '#1F2937', '灰色': '#6B7280', '黄色': '#EAB308', '靛蓝': '#6366F1', '翠绿': '#059669', '天蓝': '#0EA5E9', '深蓝': '#1E40AF', '玫瑰': '#E11D48', '琥珀': '#D97706', '翡翠': '#059669', '藏青': '#1E3A8A' };
+    for (const [cn, hex] of Object.entries(colorMap)) {
+      if ((inst.includes('颜色') || inst.includes('主题色') || inst.includes('配色') || inst.includes('色调')) && inst.includes(cn)) {
+        c.primaryColor = hex;
+        return { content: c, reply: `已将主题色改为${cn}（${hex}）` };
+      }
+    }
+
+    // Change CTA button text
+    const ctaMatch = inst.match(/(?:按钮|cta|行动按钮|呼叫按钮).*(?:改成|改为|换成|设置)\s*(.+)/);
+    if (ctaMatch) { c.heroCta = ctaMatch[1].trim(); return { content: c, reply: `已将按钮文字改为「${c.heroCta}」` }; }
+
+    // Add a service
+    if (inst.includes('添加') && (inst.includes('服务') || inst.includes('功能') || inst.includes('特性'))) {
+      if (c.services) {
+        const serviceMatch = inst.match(/(?:添加|增加).*(?:服务|功能|特性)\s*(?:叫|名为|名称)?\s*(.+)/);
+        const title = serviceMatch ? serviceMatch[1].trim() : '新服务';
+        c.services.push({ icon: '✨', title: title, desc: '点击编辑修改描述' });
+        return { content: c, reply: `已添加服务「${title}」，请在编辑面板中修改详细内容` };
+      }
+    }
+
+    // Add a product
+    if (inst.includes('添加') && (inst.includes('商品') || inst.includes('产品'))) {
+      if (c.products) {
+        const prodMatch = inst.match(/(?:添加|增加).*(?:商品|产品)\s*(?:叫|名为|名称)?\s*(.+)/);
+        const name = prodMatch ? prodMatch[1].trim() : '新商品';
+        c.products.push({ name: name, price: '¥0', oldPrice: '¥0', icon: '📦', desc: '商品描述' });
+        return { content: c, reply: `已添加商品「${name}」，请在编辑面板中修改价格和描述` };
+      }
+    }
+
+    // Add a project/work
+    if (inst.includes('添加') && (inst.includes('作品') || inst.includes('项目'))) {
+      if (c.projects) {
+        const projMatch = inst.match(/(?:添加|增加).*(?:作品|项目)\s*(?:叫|名为|名称)?\s*(.+)/);
+        const title = projMatch ? projMatch[1].trim() : '新作品';
+        c.projects.push({ title: title, category: '分类', desc: '作品描述' });
+        return { content: c, reply: `已添加作品「${title}」` };
+      }
+    }
+
+    // Add a blog post
+    if (inst.includes('添加') && (inst.includes('文章') || inst.includes('博客'))) {
+      if (c.posts) {
+        const postMatch = inst.match(/(?:添加|增加|写).*(?:文章|博客)\s*(?:叫|名为|标题|关于)?\s*(.+)/);
+        const title = postMatch ? postMatch[1].trim() : '新文章';
+        c.posts.push({ title: title, date: new Date().toISOString().split('T')[0], category: '分类', excerpt: '文章摘要' });
+        return { content: c, reply: `已添加文章「${title}」` };
+      }
+    }
+
+    // Change about text
+    const aboutMatch = inst.match(/(?:关于|简介|介绍|公司介绍|关于我们).*(?:改成|改为|换成|设置|更新)\s*(.+)/);
+    if (aboutMatch) { c.aboutText = aboutMatch[1].trim(); return { content: c, reply: `已修改关于内容` }; }
+
+    // Change contact info
+    const emailMatch = inst.match(/(?:邮箱|email|电子邮件).*(?:改成|改为|换成|设置)\s*(.+)/);
+    if (emailMatch) { c.contactEmail = emailMatch[1].trim(); return { content: c, reply: `已将邮箱改为「${c.contactEmail}」` }; }
+
+    const phoneMatch = inst.match(/(?:电话|手机|联系方式).*(?:改成|改为|换成|设置)\s*(.+)/);
+    if (phoneMatch) { c.contactPhone = phoneMatch[1].trim(); return { content: c, reply: `已将电话改为「${c.contactPhone}」` }; }
+
+    const addrMatch = inst.match(/(?:地址|位置).*(?:改成|改为|换成|设置)\s*(.+)/);
+    if (addrMatch) { c.contactAddress = addrMatch[1].trim(); return { content: c, reply: `已将地址改为「${c.contactAddress}」` }; }
+
+    // Delete a service by name
+    if ((inst.includes('删除') || inst.includes('去掉') || inst.includes('移除')) && inst.includes('服务') && c.services) {
+      const delMatch = inst.match(/(?:删除|去掉|移除).*(?:服务|功能)\s*(.+)/);
+      if (delMatch) {
+        const name = delMatch[1].trim();
+        const idx = c.services.findIndex(s => s.title.includes(name) || name.includes(s.title));
+        if (idx >= 0) { c.services.splice(idx, 1); return { content: c, reply: `已删除服务「${name}」` }; }
+      }
+    }
+
+    // Delete a product by name
+    if ((inst.includes('删除') || inst.includes('去掉') || inst.includes('移除')) && (inst.includes('商品') || inst.includes('产品')) && c.products) {
+      const delMatch = inst.match(/(?:删除|去掉|移除).*(?:商品|产品)\s*(.+)/);
+      if (delMatch) {
+        const name = delMatch[1].trim();
+        const idx = c.products.findIndex(s => s.name.includes(name) || name.includes(s.name));
+        if (idx >= 0) { c.products.splice(idx, 1); return { content: c, reply: `已删除商品「${name}」` }; }
+      }
+    }
+
+    // Change a service title
+    const editServiceMatch = inst.match(/(?:修改|改|编辑).*(?:服务|功能)\s*(.+?)\s*(?:的)?(?:标题|名字|名称).*(?:改成|改为|换成)\s*(.+)/);
+    if (editServiceMatch && c.services) {
+      const oldName = editServiceMatch[1].trim();
+      const newName = editServiceMatch[2].trim();
+      const svc = c.services.find(s => s.title.includes(oldName) || oldName.includes(s.title));
+      if (svc) { svc.title = newName; return { content: c, reply: `已将服务「${oldName}」改名为「${newName}」` }; }
+    }
+
+    // Change a product price
+    const priceMatch = inst.match(/(.+?)\s*(?:的)?价格.*(?:改成|改为|换成|设置|设为)\s*(.+)/);
+    if (priceMatch && c.products) {
+      const prodName = priceMatch[1].trim();
+      const newPrice = priceMatch[2].trim();
+      const prod = c.products.find(s => s.name.includes(prodName) || prodName.includes(s.name));
+      if (prod) { prod.price = newPrice.startsWith('¥') ? newPrice : '¥' + newPrice; return { content: c, reply: `已将「${prod.name}」的价格改为 ${prod.price}` }; }
+    }
+
+    // Change stats
+    const statMatch = inst.match(/(?:统计|数据|数字)\s*(.+?)\s*(?:的)?(?:数字|值|数量).*(?:改成|改为|换成|设置)\s*(.+)/);
+    if (statMatch && c.stats) {
+      const statLabel = statMatch[1].trim();
+      const statVal = statMatch[2].trim();
+      const stat = c.stats.find(s => s.label.includes(statLabel) || statLabel.includes(s.label));
+      if (stat) { stat.num = statVal; return { content: c, reply: `已将统计「${stat.label}」的值改为 ${statVal}` }; }
+    }
+
+    // Add a stat
+    if (inst.includes('添加') && (inst.includes('统计') || inst.includes('数据项')) && c.stats) {
+      c.stats.push({ num: '0', label: '新数据' });
+      return { content: c, reply: '已添加一个新的统计项，请编辑修改' };
+    }
+
+    // Add a feature
+    if (inst.includes('添加') && inst.includes('特性') && c.features) {
+      const featMatch = inst.match(/(?:添加|增加).*特性\s*(?:叫|名为)?\s*(.+)/);
+      const title = featMatch ? featMatch[1].trim() : '新特性';
+      c.features.push({ icon: '⚡', title: title, desc: '特性描述' });
+      return { content: c, reply: `已添加特性「${title}」` };
+    }
+
+    // Add a FAQ
+    if (inst.includes('添加') && (instLower.includes('问题') || instLower.includes('faq')) && c.faqs) {
+      c.faqs.push({ q: '新问题', a: '回答内容' });
+      return { content: c, reply: '已添加一个新问题，请编辑修改' };
+    }
+
+    // Change about title
+    const aboutTitleMatch = inst.match(/(?:关于标题|about).*(?:改成|改为|换成)\s*(.+)/);
+    if (aboutTitleMatch && c.aboutTitle) { c.aboutTitle = aboutTitleMatch[1].trim(); return { content: c, reply: `已将关于标题改为「${c.aboutTitle}」` }; }
+
+    // Change skills
+    if (instLower.includes('技能') || instLower.includes('skills')) {
+      if (c.skills) {
+        const skillMatch = inst.match(/(?:添加|增加).*技能\s*(.+)/);
+        if (skillMatch) { c.skills.push(skillMatch[1].trim()); return { content: c, reply: `已添加技能「${skillMatch[1].trim()}」` }; }
+      }
+    }
+
+    // Add pricing plan
+    if (inst.includes('添加') && (instLower.includes('价格方案') || instLower.includes('套餐') || instLower.includes('plan')) && c.pricing) {
+      c.pricing.push({ name: '新方案', price: '¥0', period: '/月', features: ['功能1', '功能2'], popular: false });
+      return { content: c, reply: '已添加一个新的价格方案' };
+    }
+
+    // Make popular
+    if (instLower.includes('推荐') || instLower.includes('最受欢迎') || instLower.includes('popular')) {
+      if (c.pricing) {
+        const planMatch = inst.match(/(?:把|将)?\s*(.+?)\s*(?:设为|标记为|改成)?.*(?:推荐|最受欢迎|popular)/);
+        if (planMatch) {
+          const name = planMatch[1].trim();
+          c.pricing.forEach(p => { p.popular = (p.name.includes(name) || name.includes(p.name)); });
+          return { content: c, reply: `已将「${name}」标记为最受欢迎方案` };
+        }
+      }
+    }
+
+    // Change social links
+    const githubMatch = inst.match(/github.*(?:改成|改为|换成|设置)\s*(.+)/);
+    if (githubMatch && c.socialGithub !== undefined) { c.socialGithub = githubMatch[1].trim(); return { content: c, reply: `已更新 GitHub 链接` }; }
+
+    // Change footer/copyright
+    const footerMatch = inst.match(/(?:页脚|版权|footer).*(?:改成|改为|换成)\s*(.+)/);
+    if (footerMatch && c.footerText !== undefined) { c.footerText = footerMatch[1].trim(); return { content: c, reply: `已修改页脚内容` }; }
+
+    // Add menu item (restaurant)
+    if (inst.includes('添加') && inst.includes('菜品') && c.menu) {
+      const dishMatch = inst.match(/(?:添加|增加).*菜品\s*(?:叫|名为)?\s*(.+)/);
+      const name = dishMatch ? dishMatch[1].trim() : '新菜品';
+      if (c.menu.length > 0) {
+        c.menu[0].items = c.menu[0].items || [];
+        c.menu[0].items.push({ name: name, price: '¥0', desc: '菜品描述' });
+        return { content: c, reply: `已添加菜品「${name}」到「${c.menu[0].category}」` };
+      }
+    }
+
+    // Reset to default
+    if (instLower.includes('重置') || instLower.includes('恢复默认') || instLower.includes('reset')) {
+      const defaults = this.getDefaultContent(c.template || 'corporate');
+      return { content: defaults, reply: '已重置为默认内容' };
+    }
+
+    // Default: no match
+    return { content: c, reply: `我不太理解「${instruction}」这个指令。\n\n你可以尝试：\n• 把标题改成 XXX\n• 把颜色改成蓝色\n• 把网站名改成 XXX\n• 把按钮文字改成 XXX\n• 添加一个服务叫 XXX\n• 添加一个商品叫 XXX\n• 把 XXX 的价格改成 YYY\n• 添加一个作品\n• 添加一个文章\n• 把邮箱改成 xxx@email.com\n• 把电话改成 138xxxx\n• 重置内容\n\n更多指令持续增加中...` };
+  }
+};
+
 function renderEditor() {
   return `
-    <div style="height: calc(100vh - 56px); display: flex; overflow: hidden;">
-      <!-- Editor Sidebar -->
-      <div class="editor-sidebar">
-        <div class="editor-sidebar-header">工作区</div>
-        <div class="editor-sidebar-item active">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-          <span>文件</span>
+    <div class="page active" id="editorPage">
+      <div class="page-header">
+        <div class="page-header-text">
+          <h1>AI 建站编辑器</h1>
+          <p>选择模板、编辑内容、实时预览、一键发布</p>
         </div>
-        <div class="editor-sidebar-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
-          <span>样式</span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline" onclick="navigate('templates')">选择模板</button>
+          <button class="btn btn-outline" onclick="downloadCurrentHtml()">💾 下载 HTML</button>
+          <button class="btn btn-gradient" onclick="publishCurrentSite()">🚀 发布网站</button>
         </div>
-        <div class="editor-sidebar-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          <span>组件库</span>
+      </div>
+      <div id="editorContainer"></div>
+    </div>
+  `;
+}
+
+// Editor state
+let editorState = {
+  templateId: null,
+  content: null,
+  previewHtml: '',
+  chatHistory: []
+};
+
+function initEditor(templateId) {
+  editorState.templateId = templateId || (TemplateEngine.getDraft()?.template) || 'corporate';
+  editorState.content = TemplateEngine.getDraft() || TemplateEngine.getDefaultContent(editorState.templateId);
+  if (!editorState.content || editorState.content.template !== editorState.templateId) {
+    editorState.content = TemplateEngine.getDefaultContent(editorState.templateId);
+  }
+  updateEditorPreview();
+  renderEditorPanels();
+}
+
+function renderEditorPanels() {
+  const container = document.getElementById('editorContainer');
+  if (!container) return;
+  const c = editorState.content;
+  const tpl = editorState.templateId;
+
+  container.innerHTML = `
+    <div style="display:grid;grid-template-columns:380px 1fr;gap:0;height:calc(100vh - 180px);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+      <!-- Left: Content Editor -->
+      <div style="border-right:1px solid var(--border);overflow-y:auto;padding:24px;background:var(--bg-gray)">
+        <div style="display:flex;gap:8px;margin-bottom:20px">
+          <select class="form-select" style="flex:1" onchange="switchTemplate(this.value)">
+            <option value="corporate" ${tpl==='corporate'?'selected':''}>企业官网</option>
+            <option value="portfolio" ${tpl==='portfolio'?'selected':''}>个人作品集</option>
+            <option value="landing" ${tpl==='landing'?'selected':''}>落地页</option>
+            <option value="blog" ${tpl==='blog'?'selected':''}>博客资讯</option>
+            <option value="restaurant" ${tpl==='restaurant'?'selected':''}>餐饮美食</option>
+            <option value="ecommerce" ${tpl==='ecommerce'?'selected':''}>电商商城</option>
+          </select>
         </div>
-        <div class="editor-sidebar-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <span>AI 生成素材</span>
+
+        <div class="form-section" style="background:#fff;padding:20px;border-radius:8px;margin-bottom:16px">
+          <div class="form-section-title" style="margin-bottom:16px">基本信息</div>
+          <div class="form-group">
+            <label class="form-label">网站名称</label>
+            <input class="form-input" value="${c.siteName||''}" oninput="updateContent('siteName', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">主标题</label>
+            <input class="form-input" value="${c.heroTitle||''}" oninput="updateContent('heroTitle', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">副标题</label>
+            <textarea class="form-input" rows="2" oninput="updateContent('heroSubtitle', this.value)">${c.heroSubtitle||''}</textarea>
+          </div>
+          ${c.heroCta!==undefined?`<div class="form-group"><label class="form-label">按钮文字</label><input class="form-input" value="${c.heroCta||''}" oninput="updateContent('heroCta', this.value)"></div>`:''}
+          <div class="form-group">
+            <label class="form-label">主题色</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              ${[['#0D9488','青色'],['#3B82F6','蓝色'],['#8B5CF6','紫色'],['#EF4444','红色'],['#F59E0B','橙色'],['#059669','绿色'],['#6366F1','靛蓝'],['#EC4899','粉色']].map(([hex,name])=>`<div onclick="updateContent('primaryColor','${hex}');updateEditorPreview()" style="width:32px;height:32px;border-radius:8px;background:${hex};cursor:pointer;border:${c.primaryColor===hex?'3px solid #1F2937':'2px solid #fff'};box-shadow:0 0 0 1px #E5E7EB" title="${name}"></div>`).join('')}
+            </div>
+          </div>
         </div>
-        <div class="editor-sidebar-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>潜在客户</span>
-        </div>
-        <div class="editor-sidebar-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span>预约</span>
-        </div>
-        <div class="editor-sidebar-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-          <span>商店</span>
-        </div>
-        <div class="editor-sidebar-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          <span>后端</span>
-        </div>
-        <div class="editor-sidebar-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          <span>项目设置</span>
+
+        ${c.aboutText!==undefined?`<div class="form-section" style="background:#fff;padding:20px;border-radius:8px;margin-bottom:16px">
+          <div class="form-section-title" style="margin-bottom:16px">关于内容</div>
+          <div class="form-group"><textarea class="form-input" rows="3" oninput="updateContent('aboutText', this.value)">${c.aboutText||''}</textarea></div>
+        </div>`:''}
+
+        ${c.services?`<div class="form-section" style="background:#fff;padding:20px;border-radius:8px;margin-bottom:16px">
+          <div class="form-section-title" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">服务/功能 <button class="btn btn-ghost btn-sm" onclick="addEditorItem('services')">+ 添加</button></div>
+          ${c.services.map((s,i)=>`<div style="padding:12px;background:var(--bg-gray);border-radius:8px;margin-bottom:8px">
+            <input class="form-input" style="margin-bottom:8px" placeholder="图标" value="${s.icon}" oninput="updateArrayItem('services',${i},'icon',this.value)">
+            <input class="form-input" style="margin-bottom:8px" placeholder="标题" value="${s.title}" oninput="updateArrayItem('services',${i},'title',this.value)">
+            <textarea class="form-input" rows="2" placeholder="描述" oninput="updateArrayItem('services',${i},'desc',this.value)">${s.desc}</textarea>
+            <button class="btn btn-ghost btn-sm" style="color:var(--danger);margin-top:4px" onclick="removeEditorItem('services',${i})">删除</button>
+          </div>`).join('')}
+        </div>`:''}
+
+        ${c.products?`<div class="form-section" style="background:#fff;padding:20px;border-radius:8px;margin-bottom:16px">
+          <div class="form-section-title" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">商品 <button class="btn btn-ghost btn-sm" onclick="addEditorItem('products')">+ 添加</button></div>
+          ${c.products.map((s,i)=>`<div style="padding:12px;background:var(--bg-gray);border-radius:8px;margin-bottom:8px">
+            <input class="form-input" style="margin-bottom:8px" placeholder="图标" value="${s.icon}" oninput="updateArrayItem('products',${i},'icon',this.value)">
+            <input class="form-input" style="margin-bottom:8px" placeholder="名称" value="${s.name}" oninput="updateArrayItem('products',${i},'name',this.value)">
+            <input class="form-input" style="margin-bottom:8px" placeholder="价格" value="${s.price}" oninput="updateArrayItem('products',${i},'price',this.value)">
+            <textarea class="form-input" rows="2" placeholder="描述" oninput="updateArrayItem('products',${i},'desc',this.value)">${s.desc}</textarea>
+            <button class="btn btn-ghost btn-sm" style="color:var(--danger);margin-top:4px" onclick="removeEditorItem('products',${i})">删除</button>
+          </div>`).join('')}
+        </div>`:''}
+
+        ${c.projects?`<div class="form-section" style="background:#fff;padding:20px;border-radius:8px;margin-bottom:16px">
+          <div class="form-section-title" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">作品 <button class="btn btn-ghost btn-sm" onclick="addEditorItem('projects')">+ 添加</button></div>
+          ${c.projects.map((s,i)=>`<div style="padding:12px;background:var(--bg-gray);border-radius:8px;margin-bottom:8px">
+            <input class="form-input" style="margin-bottom:8px" placeholder="标题" value="${s.title}" oninput="updateArrayItem('projects',${i},'title',this.value)">
+            <input class="form-input" style="margin-bottom:8px" placeholder="分类" value="${s.category}" oninput="updateArrayItem('projects',${i},'category',this.value)">
+            <textarea class="form-input" rows="2" placeholder="描述" oninput="updateArrayItem('projects',${i},'desc',this.value)">${s.desc}</textarea>
+            <button class="btn btn-ghost btn-sm" style="color:var(--danger);margin-top:4px" onclick="removeEditorItem('projects',${i})">删除</button>
+          </div>`).join('')}
+        </div>`:''}
+
+        ${c.posts?`<div class="form-section" style="background:#fff;padding:20px;border-radius:8px;margin-bottom:16px">
+          <div class="form-section-title" style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">文章 <button class="btn btn-ghost btn-sm" onclick="addEditorItem('posts')">+ 添加</button></div>
+          ${c.posts.map((s,i)=>`<div style="padding:12px;background:var(--bg-gray);border-radius:8px;margin-bottom:8px">
+            <input class="form-input" style="margin-bottom:8px" placeholder="标题" value="${s.title}" oninput="updateArrayItem('posts',${i},'title',this.value)">
+            <input class="form-input" style="margin-bottom:8px" placeholder="分类" value="${s.category}" oninput="updateArrayItem('posts',${i},'category',this.value)">
+            <textarea class="form-input" rows="2" placeholder="摘要" oninput="updateArrayItem('posts',${i},'excerpt',this.value)">${s.excerpt}</textarea>
+            <button class="btn btn-ghost btn-sm" style="color:var(--danger);margin-top:4px" onclick="removeEditorItem('posts',${i})">删除</button>
+          </div>`).join('')}
+        </div>`:''}
+
+        ${c.menu?`<div class="form-section" style="background:#fff;padding:20px;border-radius:8px;margin-bottom:16px">
+          <div class="form-section-title" style="margin-bottom:16px">菜单</div>
+          ${c.menu.map((cat,ci)=>`<div style="margin-bottom:16px">
+            <input class="form-input" style="margin-bottom:8px;font-weight:600" value="${cat.category}" oninput="updateMenuItem(${ci},'category',this.value)">
+            ${(cat.items||[]).map((item,ii)=>`<div style="padding:8px 12px;background:var(--bg-gray);border-radius:6px;margin-bottom:6px">
+              <input class="form-input" style="margin-bottom:4px" placeholder="菜名" value="${item.name}" oninput="updateMenuItemChild(${ci},${ii},'name',this.value)">
+              <input class="form-input" style="margin-bottom:4px" placeholder="价格" value="${item.price}" oninput="updateMenuItemChild(${ci},${ii},'price',this.value)">
+              <textarea class="form-input" rows="1" placeholder="描述" oninput="updateMenuItemChild(${ci},${ii},'desc',this.value)">${item.desc}</textarea>
+            </div>`).join('')}
+          </div>`).join('')}
+        </div>`:''}
+
+        <!-- AI Assistant -->
+        <div class="form-section" style="background:linear-gradient(135deg,var(--primary-bg) 0%,#fff 100%);padding:20px;border-radius:8px;border:1px solid var(--primary-lighter)">
+          <div class="form-section-title" style="margin-bottom:12px;display:flex;align-items:center;gap:6px">🤖 AI 助手 <span style="font-size:11px;background:var(--primary);color:#fff;padding:2px 8px;border-radius:10px">可用</span></div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">输入指令，AI 自动修改内容</p>
+          <div id="aiChatHistory" style="max-height:200px;overflow-y:auto;margin-bottom:12px">${(editorState.chatHistory||[]).map(m=>`<div style="padding:8px 12px;${m.role==='user'?'background:#fff':'background:var(--primary-bg)'};border-radius:8px;margin-bottom:8px;font-size:13px"><strong>${m.role==='user'?'你':'AI'}：</strong>${m.text}</div>`).join('')}</div>
+          <div style="display:flex;gap:8px">
+            <input class="form-input" id="aiEditorInput" placeholder="如：把标题改成 欢迎来到我的网站" onkeydown="if(event.key==='Enter'){handleAIEditor()}" style="flex:1">
+            <button class="btn btn-gradient btn-sm" onclick="handleAIEditor()">发送</button>
+          </div>
         </div>
       </div>
 
-      <!-- Editor Main -->
-      <div class="editor-main">
-        <div class="editor-main-header">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <span class="editor-breadcrumb">管理你的商品</span>
-            <span class="badge badge-green" style="background: var(--success-bg); color: var(--success);">测试</span>
-          </div>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn btn-ghost btn-sm" onclick="showToast('预览')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              预览
-            </button>
-          </div>
+      <!-- Right: Live Preview -->
+      <div style="background:#fff;position:relative">
+        <div style="position:absolute;top:12px;right:12px;z-index:10;display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="openPreviewInNewTab()" title="新窗口打开">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </button>
+          <span style="display:flex;align-items:center;padding:4px 12px;background:var(--bg-gray);border-radius:var(--radius-full);font-size:12px;color:var(--text-muted)">实时预览</span>
         </div>
-
-        <div class="editor-content">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; color: var(--text-muted); font-size: 13px;">
-            <div class="loading-dots"><span></span><span></span><span></span></div>
-            正在生成，大约需要 5 分钟
-          </div>
-
-          <div class="card" style="max-width: 600px; margin-top: 16px;">
-            <div style="font-size: 16px; font-weight: 600; margin-bottom: 4px;">管理你的商品</div>
-            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 24px;">使用"商店"功能快速编辑商品信息，无需消耗积分，即可自动同步到网站页面。</div>
-
-            <div class="form-section">
-              <div class="form-section-title">价格设置</div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div class="form-group">
-                  <label class="form-label">货币 <span class="required">*</span></label>
-                  <select class="form-select">
-                    <option>USD $</option>
-                    <option>CNY ¥</option>
-                    <option>EUR €</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label class="form-label">原价 <span class="required">*</span></label>
-                  <div class="price-input-wrapper">
-                    <span class="price-prefix">$</span>
-                    <input type="number" class="price-input" value="59.99">
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <div class="checkbox-wrapper" onclick="toggleCheckbox(this)">
-                  <div class="checkbox checked"></div>
-                  <span style="font-size: 14px;">启用折扣</span>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">促销价 <span class="required">*</span></label>
-                <div class="price-input-wrapper">
-                  <span class="price-prefix">$</span>
-                  <input type="number" class="price-input" value="49" style="border-color: var(--primary); box-shadow: 0 0 0 3px rgba(13,148,136,0.1);" autofocus>
-                </div>
-                <div class="form-hint" style="display: flex; align-items: center; gap: 4px;">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                  2 款买走
-                </div>
-              </div>
-            </div>
-
-            <div class="form-section">
-              <div class="form-section-title">自定义字段</div>
-
-              <div class="form-group">
-                <label class="form-label">支持 7 天退款</label>
-                <select class="form-select">
-                  <option>否</option>
-                  <option>是</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">促销标签</label>
-                <input type="text" class="form-input" placeholder="输入促销标签">
-              </div>
-            </div>
-
-            <div style="display: flex; gap: 12px; margin-top: 24px;">
-              <button class="btn btn-gradient" onclick="showToast('商品已保存')">保存</button>
-              <button class="btn btn-outline" onclick="showToast('已取消')">取消</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- AI Chat Panel -->
-      <div class="ai-panel">
-        <div class="ai-panel-header">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="ai-panel-title">重新构建网站页面</span>
-          </div>
-          <div class="ai-panel-actions">
-            <button class="topbar-icon-btn" title="通知">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            </button>
-            <button class="topbar-icon-btn" title="更多">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="ai-chat" id="aiChat">
-          <div class="ai-message system">Yearly Plan (50%)</div>
-
-          <div class="ai-message assistant">
-            Buildora 正在完成您的请求...
-            <div class="code-block">src/pages/Home.tsx ✓ 已创建</div>
-            <div class="code-block">src/pages/home/components/Hero.tsx 正在生成...</div>
-          </div>
-
-          <div class="ai-message user">
-            我想明确确认下你的真实想法：做一个 Buildora 风格的 AI 建站平台官网 Landing Page
-          </div>
-
-          <div class="ai-message assistant">
-            好嘞！那我们做一个 Buildora 风格的 AI 建站平台官网 Landing Page，但用青绿色调，现代感，比蓝紫色配色抢眼多了。开工！
-            <br><br>
-            <strong>2 个工具调用</strong>
-            <br>
-            Now let me build the components:
-            <div class="code-block">✓ src/pages/Home.tsx</div>
-            <div class="code-block">✓ src/pages/home/components/Navbar.tsx</div>
-            <div class="code-block">⏳ src/pages/home/components/Hero.tsx</div>
-          </div>
-        </div>
-
-        <div class="ai-input-area">
-          <div class="ai-input-wrapper">
-            <textarea class="ai-input" id="aiInput" placeholder="一次可添加一个你的修改需求..." rows="1"></textarea>
-            <button class="ai-send-btn" onclick="sendAIMessage()">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            </button>
-          </div>
-          <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <button class="btn btn-ghost btn-sm" onclick="showToast('选择元素')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
-              选择元素
-            </button>
-          </div>
-        </div>
+        <iframe id="editorPreview" style="width:100%;height:100%;border:none" sandbox="allow-same-origin"></iframe>
       </div>
     </div>
   `;
+}
+
+function updateContent(key, value) {
+  if (!editorState.content) return;
+  editorState.content[key] = value;
+  TemplateEngine.saveDraft(editorState.content);
+  updateEditorPreview();
+}
+
+function updateArrayItem(arr, idx, key, value) {
+  if (!editorState.content || !editorState.content[arr]) return;
+  editorState.content[arr][idx][key] = value;
+  TemplateEngine.saveDraft(editorState.content);
+  updateEditorPreview();
+}
+
+function addEditorItem(arr) {
+  if (!editorState.content || !editorState.content[arr]) return;
+  const templates = {
+    services: { icon: '✨', title: '新服务', desc: '服务描述' },
+    products: { name: '新商品', price: '¥0', oldPrice: '¥0', icon: '📦', desc: '商品描述' },
+    projects: { title: '新作品', category: '分类', desc: '作品描述' },
+    posts: { title: '新文章', date: new Date().toISOString().split('T')[0], category: '分类', excerpt: '文章摘要' }
+  };
+  editorState.content[arr].push(templates[arr] || {});
+  TemplateEngine.saveDraft(editorState.content);
+  renderEditorPanels();
+  updateEditorPreview();
+}
+
+function removeEditorItem(arr, idx) {
+  if (!editorState.content || !editorState.content[arr]) return;
+  editorState.content[arr].splice(idx, 1);
+  TemplateEngine.saveDraft(editorState.content);
+  renderEditorPanels();
+  updateEditorPreview();
+}
+
+function updateMenuItem(ci, key, value) {
+  if (!editorState.content || !editorState.content.menu) return;
+  editorState.content.menu[ci][key] = value;
+  TemplateEngine.saveDraft(editorState.content);
+  updateEditorPreview();
+}
+
+function updateMenuItemChild(ci, ii, key, value) {
+  if (!editorState.content || !editorState.content.menu) return;
+  editorState.content.menu[ci].items[ii][key] = value;
+  TemplateEngine.saveDraft(editorState.content);
+  updateEditorPreview();
+}
+
+function switchTemplate(newTemplate) {
+  editorState.templateId = newTemplate;
+  editorState.content = TemplateEngine.getDefaultContent(newTemplate);
+  TemplateEngine.saveDraft(editorState.content);
+  renderEditorPanels();
+  updateEditorPreview();
+  showToast(`已切换到 ${newTemplate} 模板`);
+}
+
+function updateEditorPreview() {
+  const iframe = document.getElementById('editorPreview');
+  if (!iframe || !editorState.content) return;
+  const html = TemplateEngine.generate(editorState.templateId, editorState.content);
+  editorState.previewHtml = html;
+  iframe.srcdoc = html;
+}
+
+function openPreviewInNewTab() {
+  const html = TemplateEngine.generate(editorState.templateId, editorState.content);
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+function handleAIEditor() {
+  const input = document.getElementById('aiEditorInput');
+  if (!input || !input.value.trim()) return;
+  const instruction = input.value.trim();
+  input.value = '';
+
+  // Store user message in chat history
+  editorState.chatHistory = editorState.chatHistory || [];
+  editorState.chatHistory.push({ role: 'user', text: instruction });
+
+  const result = TemplateEngine.applyAIInstruction(editorState.content, instruction);
+  editorState.content = result.content;
+  TemplateEngine.saveDraft(editorState.content);
+
+  // Store AI reply in chat history
+  editorState.chatHistory.push({ role: 'ai', text: result.reply });
+
+  renderEditorPanels();
+  updateEditorPreview();
+
+  // Scroll chat to bottom after render
+  setTimeout(() => {
+    const chat = document.getElementById('aiChatHistory');
+    if (chat) chat.scrollTop = chat.scrollHeight;
+  }, 100);
+}
+
+async function publishCurrentSite() {
+  if (!editorState.content) {
+    showToast('请先选择模板并编辑内容', 'warning');
+    return;
+  }
+  const siteName = editorState.content.siteName || '未命名网站';
+  showToast('正在发布网站...');
+
+  try {
+    const site = await TemplateEngine.publish(siteName, editorState.templateId, editorState.content);
+    showToast(`✓ 网站「${siteName}」已发布！`, 'success');
+
+    const fullUrl = location.origin + location.pathname + '?site=' + site.slug;
+    // Show publish result
+    const container = document.getElementById('editorContainer');
+    if (container) {
+      container.innerHTML = `
+        <div style="text-align:center;padding:60px 20px">
+          <div style="font-size:64px;margin-bottom:16px">🎉</div>
+          <h2 style="font-size:24px;font-weight:700;margin-bottom:8px">网站发布成功！</h2>
+          <p style="color:var(--text-muted);margin-bottom:32px">你的网站已成功发布，可以通过以下方式访问</p>
+          <div style="background:var(--bg-gray);border-radius:12px;padding:24px;max-width:560px;margin:0 auto;text-align:left">
+            <div style="margin-bottom:16px"><strong>网站名称：</strong>${site.name}</div>
+            <div style="margin-bottom:16px"><strong>访问链接：</strong><a href="?site=${site.slug}" target="_blank" style="color:var(--primary)">${fullUrl}</a></div>
+            <div style="margin-bottom:16px"><strong>模板类型：</strong>${site.template}</div>
+            <div style="margin-bottom:16px"><strong>存储位置：</strong>${(DB.client && !DB.offlineMode) ? 'Supabase 云端（所有人可访问）' : '本地浏览器（仅当前设备可访问）'}</div>
+            <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap">
+              <button class="btn btn-gradient" onclick="window.open('?site=${site.slug}','_blank')">🌐 查看网站</button>
+              <button class="btn btn-outline" onclick="copySiteUrl('${fullUrl}')">📋 复制链接</button>
+              <button class="btn btn-outline" onclick="downloadSiteHtml('${site.slug}')">💾 下载 HTML</button>
+              <button class="btn btn-outline" onclick="navigate('projects')">返回项目列表</button>
+              <button class="btn btn-outline" onclick="renderEditorPanels();updateEditorPreview()">继续编辑</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  } catch(e) {
+    showToast('发布失败：' + e.message, 'error');
+  }
+}
+
+// Copy site URL to clipboard
+function copySiteUrl(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('✓ 链接已复制到剪贴板', 'success');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('✓ 链接已复制', 'success');
+  });
+}
+
+// Download generated HTML file
+function downloadSiteHtml(slug) {
+  const site = TemplateEngine.getSiteBySlug(slug);
+  if (!site) { showToast('未找到网站数据', 'error'); return; }
+  const blob = new Blob([site.html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (site.name || 'website') + '.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  showToast('✓ HTML 文件已下载', 'success');
+}
+
+// Download current editor preview as HTML
+function downloadCurrentHtml() {
+  if (!editorState.content) { showToast('请先选择模板', 'warning'); return; }
+  const html = TemplateEngine.generate(editorState.templateId, editorState.content);
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (editorState.content.siteName || 'website') + '.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+  showToast('✓ HTML 文件已下载', 'success');
+}
+
+// Check URL for published site view
+async function checkPublishedSiteView() {
+  const params = new URLSearchParams(location.search);
+  const siteSlug = params.get('site');
+  if (siteSlug) {
+    // Show loading state
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#6B7280"><div style="text-align:center"><div style="width:40px;height:40px;border:3px solid #E5E7EB;border-top-color:#0D9488;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px"></div><p>正在加载网站...</p></div></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+
+    // First check localStorage (fast, same-browser)
+    let site = TemplateEngine.getSiteBySlug(siteSlug);
+
+    // If not found locally, try Supabase (cross-browser/device)
+    if (!site && DB.client) {
+      try {
+        const { data, error } = await DB.client
+          .from('websites')
+          .select('*')
+          .eq('slug', siteSlug)
+          .eq('status', 'published')
+          .single();
+        if (!error && data) {
+          site = {
+            id: data.id,
+            slug: data.slug,
+            name: data.name,
+            template: data.template_id,
+            content: data.content,
+            html: data.html_content,
+            status: data.status,
+            created_at: data.created_at
+          };
+          // Cache in localStorage for faster future loads
+          const cached = TemplateEngine.getPublishedSites();
+          cached.unshift(site);
+          localStorage.setItem(TemplateEngine.SITES_KEY, JSON.stringify(cached));
+        }
+      } catch(e) {
+        console.warn('Supabase site fetch failed:', e);
+      }
+    }
+
+    if (site && site.html) {
+      // Replace entire document with the published site HTML
+      document.documentElement.innerHTML = site.html;
+      return true;
+    } else {
+      // Site not found - show 404 page
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;background:#F9FAFB"><div style="text-align:center;max-width:400px;padding:40px"><div style="font-size:64px;margin-bottom:16px">🔍</div><h1 style="font-size:24px;font-weight:700;color:#1F2937;margin-bottom:8px">网站未找到</h1><p style="color:#6B7280;margin-bottom:24px">您访问的网站可能已被删除或链接有误。</p><a href="' + location.pathname + '" style="display:inline-block;padding:12px 28px;background:#0D9488;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">返回 Buildora</a></div></div>';
+      return true;
+    }
+  }
+  return false;
 }
 
 // ==================== Analytics Page ====================
@@ -6156,21 +7099,33 @@ async function renderAnalytics() {
 // ==================== Projects Page ====================
 async function renderProjects() {
   const projects = await DB.get('projects');
-  const publishedCount = projects.filter(p => p.status === 'published').length;
-  const draftCount = projects.filter(p => p.status === 'draft').length;
+  const publishedSites = TemplateEngine.getPublishedSites();
+
+  // Merge published sites into the display
+  const allItems = [
+    ...publishedSites.map(s => ({ id: s.id, name: s.name, status: 'published', template: s.template, domain: s.slug, visits: 0, isPublishedSite: true, icon: '🌐' })),
+    ...projects.map(p => ({ ...p, isPublishedSite: false }))
+  ];
+
+  const publishedCount = allItems.filter(p => p.status === 'published').length;
+  const draftCount = allItems.filter(p => p.status === 'draft').length;
 
   return `
     <div class="page active">
       <div class="page-header">
         <div class="page-header-text">
           <h1>项目</h1>
-          <p>管理你所有的建站项目（共 ${projects.length} 个项目）</p>
+          <p>管理你所有的建站项目（共 ${allItems.length} 个项目，${publishedSites.length} 个已发布网站）</p>
         </div>
         <div style="display: flex; gap: 8px;">
           <div style="position: relative;">
             <input type="text" class="form-input" placeholder="搜索项目..." style="padding-left: 36px; width: 200px;" oninput="filterProjects(this.value)">
             <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </div>
+          <button class="btn btn-outline" onclick="navigate('templates')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            模板库
+          </button>
           <button class="btn btn-gradient" onclick="navigate('editor')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             新建项目
@@ -6179,24 +7134,24 @@ async function renderProjects() {
       </div>
 
       <div style="display: flex; gap: 8px; margin-bottom: 24px;">
-        <button class="btn btn-outline btn-sm project-filter-btn active" onclick="filterProjectsByStatus('all', this)">全部 (${projects.length})</button>
+        <button class="btn btn-outline btn-sm project-filter-btn active" onclick="filterProjectsByStatus('all', this)">全部 (${allItems.length})</button>
         <button class="btn btn-outline btn-sm project-filter-btn" onclick="filterProjectsByStatus('published', this)">已发布 (${publishedCount})</button>
         <button class="btn btn-outline btn-sm project-filter-btn" onclick="filterProjectsByStatus('draft', this)">草稿 (${draftCount})</button>
       </div>
 
-      ${projects.length === 0 ? `
+      ${allItems.length === 0 ? `
         <div class="empty-state">
           <div style="font-size: 64px; margin-bottom: 16px;">📁</div>
           <h2>暂无项目</h2>
           <p>使用 AI 建站编辑器创建你的第一个项目</p>
-          <button class="btn btn-gradient" onclick="navigate('editor')">开始建站</button>
+          <button class="btn btn-gradient" onclick="navigate('templates')">选择模板开始建站</button>
         </div>
       ` : `
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;" id="projectsGrid">
-          ${projects.map(p => `
+          ${allItems.map(p => `
             <div class="card card-hover" style="cursor: pointer; overflow: hidden;" data-project-name="${(p.name || '').toLowerCase()}" data-project-status="${p.status || 'draft'}" onclick="navigate('editor')">
-              <div style="height: 140px; background: ${p.thumbnail || '#0D9488'}; display: flex; align-items: center; justify-content: center; font-size: 48px; position: relative;">
-                ${p.icon || '🚀'}
+              <div style="height: 140px; background: ${p.thumbnail || (p.template === 'ecommerce' ? '#0D9488' : p.template === 'portfolio' ? '#6366F1' : p.template === 'landing' ? '#0D9488' : p.template === 'blog' ? '#F59E0B' : p.template === 'restaurant' ? '#059669' : '#0D9488')}; display: flex; align-items: center; justify-content: center; font-size: 48px; position: relative;">
+                ${p.icon || (p.template === 'ecommerce' ? '🛒' : p.template === 'portfolio' ? '🎨' : p.template === 'landing' ? '🚀' : p.template === 'blog' ? '📝' : p.template === 'restaurant' ? '🍽️' : '🏢')}
                 ${p.status === 'published' 
                   ? '<span style="position: absolute; top: 10px; right: 10px; background: var(--success); color: white; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: var(--radius-full);">已发布</span>'
                   : '<span style="position: absolute; top: 10px; right: 10px; background: var(--warning); color: white; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: var(--radius-full);">草稿</span>'
@@ -6205,11 +7160,15 @@ async function renderProjects() {
               <div style="padding: 16px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
                   <h3 style="font-size: 15px; font-weight: 600;">${p.name || ''}</h3>
+                  ${p.template ? `<span style="font-size:11px;color:var(--text-muted);background:var(--bg-gray);padding:2px 8px;border-radius:10px">${p.template}</span>` : ''}
                 </div>
-                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-family: monospace;">${p.domain || ''}</div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-family: monospace;">${p.domain || p.id || ''}</div>
                 <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-light);">
                   <span style="font-size: 12px; color: var(--text-secondary);">${p.visits || '0'} 次访问</span>
-                  <span class="status-badge ${p.status || 'draft'}">${p.status === 'published' ? '已发布' : '草稿'}</span>
+                  ${p.isPublishedSite 
+                    ? `<a href="?site=${p.domain}" target="_blank" onclick="event.stopPropagation()" style="font-size:12px;color:var(--primary);font-weight:600">查看网站 →</a>`
+                    : `<span class="status-badge ${p.status || 'draft'}">${p.status === 'published' ? '已发布' : '草稿'}</span>`
+                  }
                 </div>
               </div>
             </div>
@@ -6976,7 +7935,12 @@ async function initApp() {
   }
 }
 
-initApp();
+// Check if viewing a published site via URL parameter
+checkPublishedSiteView().then(isViewingSite => {
+  if (!isViewingSite) {
+    initApp();
+  }
+});
 
 // ==================== E-commerce Module ====================
 
@@ -7975,8 +8939,11 @@ function useTemplate(templateId) {
   const tpl = siteTemplates.find(t => t.id === templateId);
   if (!tpl) return;
   showToast(`已选择「${tpl.name}」模板，正在进入编辑器...`);
+  // Set the template in draft so editor picks it up
+  const content = TemplateEngine.getDefaultContent(templateId);
+  TemplateEngine.saveDraft(content);
   setTimeout(() => {
-    navigate(tpl.route);
+    navigate('editor');
   }, 800);
 }
 </script>
